@@ -1,1 +1,1 @@
-Artifitial neural network library 
+Artifitial neural network library, by insilico.
