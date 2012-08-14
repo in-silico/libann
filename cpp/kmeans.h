@@ -19,10 +19,15 @@ namespace LibAnn {
     void kmeansInit(Mat *centroids, const Mat *x, int k);
 
     /**
-     * Normalices each column of org to have zero mean and unit standard deviation, and stores the
-     * result to dest.
+     * Computes the standar deviation and mean vector of each column of x into ans
      */
-    void normalize(Mat *dest, const Mat *org);
+    void std(Mat *stdev, Mat *mean, const Mat *x);
+
+    /**
+     * Normalices each column of org to have zero mean and unit standard deviation, and stores the
+     * result to dest. The mean and vector of standard deviations is returned as a row vector.
+     */
+    void normalize(Mat *dest, Mat *mean, Mat *stdev, const Mat *org);
 
     /**
      * Finds the closest centroids to each instance of x in idx. Meaning that idx[j] is a number

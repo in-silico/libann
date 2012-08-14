@@ -9,7 +9,6 @@
 
 using namespace std;
 
-#define TRANSP 1
 #define rep(i,n) for(int i=0; i<(n); i++)
 #define repf(i,a,b) for (int i=(a); i<=(b); i++)
 #define repb(i,a,b) for(int i=(a); i>=(b); i--)

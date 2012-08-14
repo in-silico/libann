@@ -1,6 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#define TRANSP 1
+
 class Mat {
     int r,c;    
 public:
@@ -35,5 +37,10 @@ public:
     int& nrows() { return (flags & TRANSP) ? c : r; }
     int& ncols() { return (flags & TRANSP) ? r : c; }
 };
+
+void matCopy(Mat *ans, Mat *src);
+void matMult(Mat *ans, Mat *a, Mat *b);
+bool matInv(Mat *ans, Mat *x);
+bool matPinv(Mat *ans, Mat *x);
 
 #endif
