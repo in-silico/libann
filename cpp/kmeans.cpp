@@ -82,6 +82,7 @@ namespace LibAnn {
     }
 
     void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k) {
+	centroids->setSize(k,x->ncols());
         matSetZero(centroids);
         int howMany[k];
         memset(howMany, 0, k*sizeof(int));
