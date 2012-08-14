@@ -28,18 +28,26 @@ namespace LibAnn {
      * result to dest. The mean and vector of standard deviations is returned as a row vector.
      */
     void normalize(Mat *dest, Mat *mean, Mat *stdev, const Mat *org);
-
+    
+    /**
+    * Computes the "distance" of one set of N-dimensionals vectors respect to one N-dimentional vector, where N is the number of columns of the matrix
+    * b_row is the instance of the reference vector.
+    */
+    void distance_vectors(Mat *dist, Mat *a, Mat *b, int b_row);
+    /**
+    */
+    
     /**
      * Finds the closest centroids to each instance of x in idx. Meaning that idx[j] is a number
      * between 0 and k-1 indicating which centroid (row vector) is closer to x[j]. The vector idx
      * is a integer vector of size greater or equal to the number of rows of X.
      */
-    void findClosestCentroids(int *idx, const Mat *x, const Mat *centroids);
+    void findClosestCentroids(int *idx, Mat *x, Mat *centroids);
 
     /**
      * Computes each centroid j as the mean of the data instances whose idx[i]==j.
      */
-    void computeCentroids(Mat *centroids, const Mat* x, int *idx, int k);
+    void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k);
 
 
 };
