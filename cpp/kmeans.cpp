@@ -51,7 +51,7 @@ namespace LibAnn {
             rep(i,x_r){
                 tmp += pow(x->get(i,j),2);
             }
-            stdev->get(0,j)= (tmp/x_r) - pow(mean->get(0,j),2);
+            stdev->get(0,j)= sqrt((tmp/x_r) - pow(mean->get(0,j),2));
         }
 
     }
