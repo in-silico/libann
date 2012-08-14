@@ -34,13 +34,14 @@ public:
 
     void setSize(int w, int h) { r=w; c=h; }
 
-    int& nrows() { return (flags & TRANSP) ? c : r; }
-    int& ncols() { return (flags & TRANSP) ? r : c; }
+    int nrows() { return (flags & TRANSP) ? c : r; }
+    int ncols() { return (flags & TRANSP) ? r : c; }
 };
 
 void matCopy(Mat *ans, Mat *src);
 void matMult(Mat *ans, Mat *a, Mat *b);
 bool matInv(Mat *ans, Mat *x);
 bool matPinv(Mat *ans, Mat *x);
+void matSetZero(Mat *ans);
 
 #endif
