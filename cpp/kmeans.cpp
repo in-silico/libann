@@ -24,14 +24,14 @@ namespace LibAnn {
 
     void std(Mat *stdev, Mat *mean, Mat *x){
         double tmp;
-        int x_c = x->ncols(), x_r = x->rows();
+        int x_c = x->ncols(), x_r = x->nrows();
         //mean
         rep(j,x_c){
             tmp=0;
             rep(i,x_r){
                 tmp += x->get(i,j);
             }
-            mean->get(0,j)= tmp/(x_r());
+            mean->get(0,j)= tmp/(x_r);
         }
         //standar deviation
         rep(j,x_c){
