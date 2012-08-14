@@ -57,9 +57,10 @@ namespace LibAnn {
         return acum;
     }
 
-    void findClosestCentroids(int *idx, Mat *x, Mat *centroids) {
+    bool findClosestCentroids(int *idx, Mat *x, Mat *centroids) {
         int x_r=x->nrows() , cent_r= centroids->nrows(), row_min=0;
         double m,tmp;
+        bool ans = false;
         rep(i,x_r){
             m = inf;
             rep(j,cent_r){
@@ -69,8 +70,10 @@ namespace LibAnn {
                     row_min=j;
                 }
             }
+            ans |= (idx[i]!=row_min);
             idx[i]=row_min;
         }
+        return ans;
     }
 
     void matAddRow(Mat *ans, int rdest, Mat *x, int rorg) {
