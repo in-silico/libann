@@ -15,8 +15,7 @@ using namespace std;
 #define EPS 1E-8 
 
 void matCopy(Mat *ans, Mat *src) {
-    ans->nrows() = src->nrows(); 
-    ans->ncols() = src->ncols();
+    ans->setSize(src->nrows(), src->ncols());
     rep(i,ans->nrows())
 	rep(j,ans->ncols())
 	    ans->get(i,j) = src->get(i,j);
@@ -27,7 +26,7 @@ void matMult(Mat *ans, Mat *a, Mat *b) {
     if (nr*nc > ans->maxdata) throw "Matrix multiplication overflow";
     if (a->ncols() != b->nrows()) throw "Wrong dimensions in matrix multiplication";
     Mat *tmp = new Mat(nr*nc);
-    tmp->nrows()=nr; tmp->ncols()=nc;
+    tmp->setSize(nr, nc);
     int nk = a->ncols();
     rep(i,nr) {
 	rep(j,nc) {
@@ -67,7 +66,7 @@ bool matInv(Mat *ans, Mat *x) {
     
     //set tmp matrix as x extended with identity
     Mat *tmp = new Mat(n*n*2);
-    tmp->nrows() = n; tmp->ncols() = 2*n;
+    tmp->setSize(n,2*n);
     rep(i,n) rep(j,n) tmp->get(i,j) = x->get(i,j);
     rep(i,n) rep(j,n) tmp->get(i,j+n) = (i==j);
 
@@ -108,5 +107,11 @@ bool matPinv(Mat *ans, Mat *x) {
     x->transpose();
     matCopy(ans, tmp);
     delete tmp;
+}
+
+void matSetZero(Mat *ans) {
+    rep(i,ans->nrows()) 
+	rep(j,ans->ncols())
+	    ans->get(i,j)=0;
 }
 
