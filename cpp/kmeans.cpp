@@ -6,17 +6,28 @@
 
 const double inf = std::numeric_limits<double>::max();
 
-
-
-//using namespace LibAnn;
-
 /* Space for private helper functions here */
 
 
 /* Public functions here */
 
 namespace LibAnn {
+
     int kmeans(Mat *centers, const Mat *x, const Mat *initial_centroids, int maxIter) {
+        int m = x->nrows(), n = x->ncols();
+	    int k = initial_centroids->nrows();
+	    if (n != initial_centroids->ncols()) throw "Matrix width mismatch excpetion";
+	
+	    Mat *c = new Mat(k*n);
+	    int *idx = new int[m];
+	    matCopy(c, initial_centroids);
+
+	    for (int i=0; i<maxIter; i++) {
+	        findClosestCentroids(idx, x, c);
+	        if (!computeCentroids(c, x, idx, k)) break;
+	    }
+
+	    delete c; delete idx;
     }
 
     void kmeansInit(Mat *centroids, const Mat *x, int k) {
