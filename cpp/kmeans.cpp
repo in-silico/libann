@@ -13,7 +13,7 @@ const double inf = std::numeric_limits<double>::max();
 
 namespace LibAnn {
 
-    int kmeans(Mat *centers, const Mat *x, const Mat *initial_centroids, int maxIter) {
+    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter) {
         int m = x->nrows(), n = x->ncols();
 	    int k = initial_centroids->nrows();
 	    if (n != initial_centroids->ncols()) throw "Matrix width mismatch excpetion";
@@ -23,14 +23,14 @@ namespace LibAnn {
 	    matCopy(c, initial_centroids);
 
 	    for (int i=0; i<maxIter; i++) {
-	        findClosestCentroids(idx, x, c);
-	        if (!computeCentroids(c, x, idx, k)) break;
+	        if (!findClosestCentroids(idx, x, c)) break;
+	        computeCentroids(c, x, idx, k);
 	    }
 
 	    delete c; delete idx;
     }
 
-    void kmeansInit(Mat *centroids, const Mat *x, int k) {
+    void kmeansInit(Mat *centroids, Mat *x, int k) {
     }
 
     void std(Mat *stdev, Mat *mean, Mat *x){
@@ -55,7 +55,7 @@ namespace LibAnn {
 
     }
 
-    void normalize(Mat *dest, const Mat *org) {
+    void normalize(Mat *dest, Mat *org) {
     }
 
     double distance(Mat *a, Mat *b,const int a_row,const int b_row){
