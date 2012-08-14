@@ -14,14 +14,14 @@ namespace LibAnn {
 
     /**
      * Creates a k-dimensional vector centroids picking randomly from x a data point for each centroid and
-     * making sure that no data point is chosen twice. 
+     * making sure that no data point is chosen twice.
      */
     void kmeansInit(Mat *centroids, const Mat *x, int k);
 
     /**
      * Computes the standar deviation and mean vector of each column of x into ans
      */
-    void std(Mat *stdev, Mat *mean, const Mat *x);
+    void std(Mat *stdev, Mat *mean, Mat *x);
 
     /**
      * Normalices each column of org to have zero mean and unit standard deviation, and stores the
