@@ -35,25 +35,17 @@ namespace LibAnn {
     }
 
     void std(Mat *stdev, Mat *mean, Mat *x){
-        double tmp;
+        double tmp,tmp2;
         int x_c = x->ncols(), x_r = x->nrows();
-        //mean
         rep(j,x_c){
             tmp=0;
             rep(i,x_r){
                 tmp += x->get(i,j);
+                tmp2 += pow(x->get(i,j),2);
             }
             mean->get(0,j)= tmp/(x_r);
+            stdev->get(0,j)= sqrt((tmp2/x_r) - pow(mean->get(0,j),2));
         }
-        //standar deviation
-        rep(j,x_c){
-            tmp=0;
-            rep(i,x_r){
-                tmp += pow(x->get(i,j),2);
-            }
-            stdev->get(0,j)= sqrt((tmp/x_r) - pow(mean->get(0,j),2));
-        }
-
     }
 
     void normalize(Mat *dest, Mat *org) {
