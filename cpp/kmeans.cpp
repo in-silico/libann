@@ -34,7 +34,7 @@ namespace LibAnn {
     void kmeansInit(Mat *centroids, Mat *x, int k) {
     }
 
-    void std(Mat *stdev, Mat *mean, Mat *x){
+    void stdv(Mat *stdev, Mat *mean, Mat *x){
         double tmp,tmp2;
         int x_c = x->ncols(), x_r = x->nrows();
         rep(j,x_c){
@@ -49,6 +49,17 @@ namespace LibAnn {
     }
 
     void normalize(Mat *dest, Mat *org) {
+	Mat *stdev = new Mat(org->ncols());
+	Mat *mean = new Mat(org->ncols());
+	stdv(stdev, mean, org);
+	int n = org->nrows(), m = org->ncols();
+	dest->setSize(n, m);
+	rep(i,n) {
+	    rep(j,m) {
+		dest->get(i,j) = (org->get(i,j) - mean->get(0,j)) / stdev->get(0,j);
+	    }
+	}
+	delete stdev; delete mean;
     }
 
     double distance(Mat *a, Mat *b,const int a_row,const int b_row){
@@ -89,7 +100,7 @@ namespace LibAnn {
     }
 
     void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k) {
-	    centroids->setSize(k,x->ncols());
+	centroids->setSize(k,x->ncols());
         matSetZero(centroids);
         int howMany[k];
         memset(howMany, 0, k*sizeof(int));

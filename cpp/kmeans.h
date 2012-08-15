@@ -21,7 +21,7 @@ namespace LibAnn {
     /**
      * Computes the standar deviation and mean vector of each column of x into ans
      */
-    void std(Mat *stdev, Mat *mean, Mat *x);
+    void stdv(Mat *stdev, Mat *mean, Mat *x);
 
     /**
      * Normalices each column of org to have zero mean and unit standard deviation, and stores the
