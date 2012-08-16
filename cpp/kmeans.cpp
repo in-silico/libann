@@ -1,7 +1,10 @@
 #include "kmeans.h"
+#include <set>
 #include <limits>
 #include <cstring>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 #define rep(i,n) for(int i=0; i<(n); i++)
 
 const double inf = std::numeric_limits<double>::max();
@@ -31,7 +34,21 @@ namespace LibAnn {
 	    delete c; delete idx;
     }
 
+    void copyRow(Mat* dest, Mat *ori, int r_dest,int r_ori){
+    	if(dest->ncols()!=ori->ncols()) throw "Different dimentions (clumns).";
+	rep(i,dest->ncols())
+		dest->get(r_dest,i) = ori->get(r_ori,i);
+    }
+
     void kmeansInit(Mat *centroids, Mat *x, int k) {
+	    int n_rows= x->nrows(), asig;
+	    srand(time(0));
+	    std::set<int> used;
+	    rep(i,k){
+	    	for(asig = rand()%n_rows ; used.count(asig)>0 ;asig = rand()%n_rows);
+		used.insert(asig);
+		copyRow(centroids, x, i, asig);
+	    }
     }
 
     void stdv(Mat *stdev, Mat *mean, Mat *x){
