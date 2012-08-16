@@ -82,9 +82,10 @@ namespace LibAnn {
     double distance(Mat *a, Mat *b,const int a_row,const int b_row){
         if(a->ncols()!=b->ncols())
             throw "The vectors have different dimensions";
-        double acum=1;
-        rep(j,a->ncols()){
-            acum*= (a->get(a_row,j) - b->get(b_row,j) );
+        double acum = 0, tmp;
+        rep(j,a->ncols()) {
+	    tmp = ( a->get(a_row,j) - b->get(b_row,j) );
+            acum += tmp*tmp; 
         }
         return acum;
     }
