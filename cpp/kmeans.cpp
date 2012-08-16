@@ -16,13 +16,15 @@ const double inf = std::numeric_limits<double>::max();
 
 namespace LibAnn {
 
-    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter) {
+    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx) {
         int m = x->nrows(), n = x->ncols();
 	    int k = initial_centroids->nrows();
 	    if (n != initial_centroids->ncols()) throw "Matrix width mismatch excpetion";
 	
 	    Mat *c = new Mat(k*n);
-	    int *idx = new int[m];
+	    int *idx;
+	    if (pidx==0) idx = new int[m];
+	    else idx = pidx;
 	    matCopy(c, initial_centroids);
 
 	    for (int i=0; i<maxIter; i++) {
@@ -31,7 +33,8 @@ namespace LibAnn {
 	    }
 	    matCopy(centers,c);
 
-	    delete c; delete idx;
+	    if (pidx == 0) delete idx;
+	    delete c; 
     }
 
     void copyRow(Mat* dest, Mat *ori, int r_dest,int r_ori){
@@ -40,15 +43,26 @@ namespace LibAnn {
 		dest->get(r_dest,i) = ori->get(r_ori,i);
     }
 
+    void randPerm(int *ans, int k, int n) {	
+	rep(i,k) {
+	    int x; bool used;
+	    do {
+		x = rand()%n;
+		used=false;
+		rep(j,i) if (x==ans[j]) used=true;
+	    } while (used);
+	    ans[i]=x;
+	}
+    }
+
     void kmeansInit(Mat *centroids, Mat *x, int k) {
-	    int n_rows= x->nrows(), asig;
-	    srand(time(0));
-	    std::set<int> used;
-	    rep(i,k){
-	    	for(asig = rand()%n_rows ; used.count(asig)>0 ;asig = rand()%n_rows);
-		used.insert(asig);
-		copyRow(centroids, x, i, asig);
-	    }
+	int rp[k];
+	randPerm(rp, k, x->nrows());
+	centroids->setSize(k,x->ncols());
+	srand(time(0));
+	rep(i,k) {
+	    copyRow(centroids, x, i, rp[i]);
+	}	   
     }
 
     void stdv(Mat *stdev, Mat *mean, Mat *x){

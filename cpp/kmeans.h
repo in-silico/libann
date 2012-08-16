@@ -10,7 +10,7 @@ namespace LibAnn {
      * and returns a k column vector with the chosen centers. It iterates until each data instance does
      * not change of center or for maxIter iterations.
      */
-    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter);
+    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx=0);
 
     /**
      * Creates a k-dimensional vector centroids picking randomly from x a data point for each centroid and
