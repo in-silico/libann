@@ -57,9 +57,9 @@ namespace LibAnn {
 
     void kmeansInit(Mat *centroids, Mat *x, int k) {
 	int rp[k];
+	srand(time(0));
 	randPerm(rp, k, x->nrows());
 	centroids->setSize(k,x->ncols());
-	srand(time(0));
 	rep(i,k) {
 	    copyRow(centroids, x, i, rp[i]);
 	}	   

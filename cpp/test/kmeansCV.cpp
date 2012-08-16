@@ -3,7 +3,7 @@
 #include "../matrix.cpp"
 #include "../kmeans.cpp"
 
-#define K 16
+#define K 4
 
 using namespace LibAnn;
 
@@ -29,7 +29,7 @@ Mat* getMatrix(const char *fname) {
 	rep(j,n) {
 	    rep(k,3) {
 		uchar x = row[j*img->nChannels + k];
-		mat->get(i*m+j,k) = x;
+		mat->get(i*n+j,k) = x;
 	    }
 	}
     }
@@ -65,19 +65,21 @@ void test1() {
 }
 
 void test2(const char *fname) {
+    int cnt=0;
     try {
 	Mat *m1 = getMatrix(fname);
 	Mat *c = new Mat(300);
 	kmeansInit(c,m1,K);
 	int *idx = new int[m1->nrows()];
-	kmeans(c,m1,c,10);
+	kmeans(c,m1,c,10,idx);
 	printMat(c);
 
 	IplImage *im1 = cvCreateImage(cvSize(imgw,imgh), IPL_DEPTH_8U, 3);
+	//int cnt=0;
 	rep(i,imgh) {
 	    uchar *row = (uchar*) (im1->imageData + i*im1->widthStep);
 	    rep(j,imgw) {
-		int color = idx[i*imgh + j];
+		int color = idx[cnt++];
 		rep(k,3)
 		    row[j*im1->nChannels + k] = c->get(color,k);
 	    }
@@ -87,6 +89,7 @@ void test2(const char *fname) {
 	delete idx; delete m1; delete c;
     } catch (const char *s) {
 	printf("Exception: %s\n",s);
+	printf("%d\n",cnt);
     }
 }
 
