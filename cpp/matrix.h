@@ -32,10 +32,12 @@ public:
 
     void transpose() { flags ^= TRANSP; }
 
-    void setSize(int w, int h) { r=w; c=h; }
+    void setSize(int w, int h);
 
     int nrows() { return (flags & TRANSP) ? c : r; }
     int ncols() { return (flags & TRANSP) ? r : c; }
+    void save(const char *fname);
+    void load(const char *fname);
 };
 
 void matCopy(Mat *ans, Mat *src);
@@ -43,5 +45,6 @@ void matMult(Mat *ans, Mat *a, Mat *b);
 bool matInv(Mat *ans, Mat *x);
 bool matPinv(Mat *ans, Mat *x);
 void matSetZero(Mat *ans);
+void matSave(Mat *x, const char *fname);
 
 #endif

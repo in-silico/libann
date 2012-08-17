@@ -14,12 +14,42 @@ using namespace std;
 #define repb(i,a,b) for(int i=(a); i>=(b); i--)
 #define EPS 1E-8 
 
+struct MatFileHead {
+    int r,c;
+    char flags;
+};
+
 void matCopy(Mat *ans, Mat *src) {
     ans->setSize(src->nrows(), src->ncols());
     rep(i,ans->nrows())
 	rep(j,ans->ncols())
 	    ans->get(i,j) = src->get(i,j);
 }
+
+void Mat::save(const char *fname) {
+    FILE *f = fopen(fname, "wb");
+    MatFileHead h;
+    h.r = r; h.c = c; h.flags = flags;
+    fwrite(&h,sizeof(h),1,f);
+    fwrite(data,sizeof(double),r*c,f);
+    fclose(f);
+}
+
+void Mat::load(const char *fname) {
+    FILE *f = fopen(fname, "rb");
+    MatFileHead h;
+    if (fread(&h,sizeof(h),1,f) != 1) throw "Wrong matrix format exception";
+    setSize(h.r,h.c); flags = h.flags;
+    if (fread(data,sizeof(double),r*c,f) != (unsigned int)(r*c)) 
+	throw "Wrong matrix format exception";
+    fclose(f);
+}
+
+void Mat::setSize(int w, int h) { 
+    if (w*h > maxdata) throw "Insufficient space for this matrix exception";
+    r=w; c=h; flags=0; 
+}
+
 
 void matMult(Mat *ans, Mat *a, Mat *b) {
     int nr = a->nrows(), nc = b->ncols();

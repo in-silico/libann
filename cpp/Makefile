@@ -13,7 +13,7 @@ $(LIB) : $(OBJFILES)
 	$(CC) -shared -Wl,-soname,$(LIB).$(VERSION) $(FLAGS) -o $(LIB) $(OBJFILES) -lc
 
 %.o : %.cpp
-	g++ $(FLAGS) -c -o $@ $<
+	$(CC) $(FLAGS) -c -o $@ $<
 
 install : $(LIB) $(HFILES)
 	cp $(LIB) $(DIR)/$(LIB).$(VERSION)
