@@ -22,12 +22,12 @@ namespace LibAnn {
 	    if (n != initial_centroids->ncols()) throw "Matrix width mismatch excpetion";
 	
 	    Mat *c = new Mat(k*n);
-	    int *idx;
+	    int *idx; int i;
 	    if (pidx==0) idx = new int[m];
 	    else idx = pidx;
 	    matCopy(c, initial_centroids);
 
-	    for (int i=0; i<maxIter; i++) {
+	    for (i=0; i<maxIter; i++) {
 	        if (!findClosestCentroids(idx, x, c)) break;
 	        computeCentroids(c, x, idx, k);
 	    }
@@ -35,6 +35,7 @@ namespace LibAnn {
 
 	    if (pidx == 0) delete idx;
 	    delete c; 
+	    return i;
     }
 
     void copyRow(Mat* dest, Mat *ori, int r_dest,int r_ori){
@@ -69,7 +70,7 @@ namespace LibAnn {
         double tmp,tmp2;
         int x_c = x->ncols(), x_r = x->nrows();
         rep(j,x_c){
-            tmp=0;
+            tmp=tmp2=0;
             rep(i,x_r){
                 tmp += x->get(i,j);
                 tmp2 += pow(x->get(i,j),2);

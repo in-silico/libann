@@ -3,7 +3,7 @@
 #include "../matrix.cpp"
 #include "../kmeans.cpp"
 
-#define K 4
+#define K 16
 
 using namespace LibAnn;
 

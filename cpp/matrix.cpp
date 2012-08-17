@@ -101,12 +101,13 @@ bool matPinv(Mat *ans, Mat *x) {
     x->transpose();
     
     matMult(tmp,x,tmp); //tmp = x'*x
-    matInv(tmp,tmp); //tmp = inv(x'*x)
+    bool invertible = matInv(tmp,tmp); //tmp = inv(x'*x)
     matMult(tmp,tmp,x); //tmp = inv(x'*x)*x'
     
     x->transpose();
     matCopy(ans, tmp);
     delete tmp;
+    return invertible;
 }
 
 void matSetZero(Mat *ans) {

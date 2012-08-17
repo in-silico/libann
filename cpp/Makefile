@@ -24,7 +24,7 @@ install : $(LIB) $(HFILES)
 
 uninstall:
 	rm $(DIR)/$(LIB)*
-	for i in $(HFILES); do rm $(HDIR)/$(HFILES); done
+	for i in $(HFILES); do rm $(HDIR)/$$i; done
 	ldconfig
 
 clean:
