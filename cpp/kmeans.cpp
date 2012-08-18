@@ -9,12 +9,30 @@
 
 const double inf = std::numeric_limits<double>::max();
 
-/* Space for private helper functions here */
-
-
-/* Public functions here */
-
 namespace LibAnn {
+
+    /* Space for private helper functions here */
+
+    double distance(Mat *a, Mat *b,const int a_row,const int b_row){
+        if(a->ncols()!=b->ncols())
+            throw "The vectors have different dimensions";
+        double acum = 0, tmp;
+        rep(j,a->ncols()) {
+	    tmp = ( a->get(a_row,j) - b->get(b_row,j) );
+            acum += tmp*tmp; 
+        }
+        return acum;
+    }
+
+    void matAddRow(Mat *ans, int rdest, Mat *x, int rorg) {
+        int n = x->ncols();
+        if (ans->ncols() != n) throw "Matrix width mismatch exception";
+        for (int i=0; i<n; i++) {
+	    ans->get(rdest, i) += x->get(rorg, i);
+        }
+    }
+
+    /* Public functions here */
 
     int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx) {
         int m = x->nrows(), n = x->ncols();
@@ -36,6 +54,17 @@ namespace LibAnn {
 	    if (pidx == 0) delete idx;
 	    delete c; 
 	    return i;
+    }
+
+    double kmeansError(Mat *centers, Mat *x) {
+	int n = x->nrows();
+	int *idx = new int[n];
+	findClosestCentroids(idx,x,centers);
+	double ans = 0;
+	rep(i, n) {
+	    ans += distance(centers, x, idx[i], i);
+	}
+	return ans/n;
     }
 
     void copyRow(Mat* dest, Mat *ori, int r_dest,int r_ori){
@@ -94,17 +123,6 @@ namespace LibAnn {
 	delete stdev; delete mean;
     }
 
-    double distance(Mat *a, Mat *b,const int a_row,const int b_row){
-        if(a->ncols()!=b->ncols())
-            throw "The vectors have different dimensions";
-        double acum = 0, tmp;
-        rep(j,a->ncols()) {
-	    tmp = ( a->get(a_row,j) - b->get(b_row,j) );
-            acum += tmp*tmp; 
-        }
-        return acum;
-    }
-
     bool findClosestCentroids(int *idx, Mat *x, Mat *centroids) {
         int x_r=x->nrows() , cent_r= centroids->nrows(), row_min=0;
         double m,tmp;
@@ -122,14 +140,6 @@ namespace LibAnn {
             idx[i]=row_min;
         }
         return ans;
-    }
-
-    void matAddRow(Mat *ans, int rdest, Mat *x, int rorg) {
-        int n = x->ncols();
-        if (ans->ncols() != n) throw "Matrix width mismatch exception";
-        for (int i=0; i<n; i++) {
-	    ans->get(rdest, i) += x->get(rorg, i);
-        }
     }
 
     void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k) {

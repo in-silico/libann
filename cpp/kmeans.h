@@ -13,6 +13,11 @@ namespace LibAnn {
     int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx=0);
 
     /**
+     * Compute the mean squared error of projecting x on centers
+     */
+    double kmeansError(Mat *centers, Mat *x);
+
+    /**
      * Creates a k-dimensional vector centroids picking randomly from x a data point for each centroid and
      * making sure that no data point is chosen twice.
      */
