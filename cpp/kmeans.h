@@ -49,7 +49,7 @@ namespace LibAnn {
     /**
      * Computes each centroid j as the mean of the data instances whose idx[i]==j.
      */
-    void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k);
+    void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k, int nthreads=1);
 
 
 };

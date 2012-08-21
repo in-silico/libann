@@ -51,7 +51,7 @@ namespace LibAnn {
 
 	    for (i=0; i<maxIter; i++) {
 	        if (!findClosestCentroids(idx, x, c, nthreads)) break;
-	        computeCentroids(c, x, idx, k);
+	        computeCentroids(c, x, idx, k, nthreads);
 	    }
 	    matCopy(centers,c);
 
@@ -177,19 +177,62 @@ namespace LibAnn {
 	return ans;
     }
 
-    void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k) {
+    struct TCompC {
+	Mat *c;
+	Mat *x;
+	int *howMany;
+	const int *idx;
+	int k;
+	int from, to;
+    };
+
+    void *threadComputeC(void *params){
+	TCompC *p = (TCompC*)params;
+	for (int i=p->from; i<p->to; i++) {
+	    matAddRow(p->c,p->idx[i],p->x,i);
+	    p->howMany[p->idx[i]]++;
+	}
+	return 0;
+    }
+
+    void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k, int nthreads) {
 	centroids->setSize(k,x->ncols());
         matSetZero(centroids);
-        int howMany[k];
+	int howMany[k];
         memset(howMany, 0, k*sizeof(int));
-        int n = x->nrows();
-        for (int i=0; i<n; i++) {
-	    matAddRow(centroids, idx[i], x, i);
-	    howMany[idx[i]]++;
-        }
+
+	TCompC t[nthreads];
+	pthread_t threads[nthreads];
+	int n=x->nrows(), m=x->ncols();
+	int dn = (n / nthreads) + 1;
+	rep(i,nthreads) {
+	    t[i].c = new Mat(k*m);
+	    t[i].c->setSize(k,m);
+	    matSetZero(t[i].c);
+	    t[i].x = x;
+	    t[i].howMany = new int[k];
+	    memset(t[i].howMany, 0, k*sizeof(int));
+	    t[i].idx = idx;
+	    t[i].k = k;
+	    t[i].from = i*dn;
+	    t[i].to = MIN((i+1)*dn,n);
+	    pthread_create(&threads[i],NULL,threadComputeC,(void*) &t[i]);
+	}
+	rep(i,nthreads) {
+	    int rc = pthread_join(threads[i],NULL);
+	    if (rc != 0) throw "Thread exception";
+	    rep(j,k) {
+		howMany[j] += t[i].howMany[j];
+		matAddRow(centroids,j,t[i].c,j);
+	    }
+	}
         for (int i=0; i<k; i++) {
 	    for (int j=0; j<x->ncols(); j++)
 	        centroids->get(i,j) /= howMany[i];
         }
+	rep(i,nthreads) {
+	    delete t[i].c;
+	    delete [] t[i].howMany;
+	}
     }
 }
