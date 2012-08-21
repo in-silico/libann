@@ -10,7 +10,7 @@ namespace LibAnn {
      * and returns a k column vector with the chosen centers. It iterates until each data instance does
      * not change of center or for maxIter iterations.
      */
-    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx=0);
+    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int nthreads=1, int *pidx=0);
 
     /**
      * Compute the mean squared error of projecting x on centers
@@ -44,7 +44,7 @@ namespace LibAnn {
      * between 0 and k-1 indicating which centroid (row vector) is closer to x[j]. The vector idx
      * is a integer vector of size greater or equal to the number of rows of X.
      */
-    bool findClosestCentroids(int *idx, Mat *x, Mat *centroids);
+    bool findClosestCentroids(int *idx, Mat *x, Mat *centroids, int nthreads=1);
 
     /**
      * Computes each centroid j as the mean of the data instances whose idx[i]==j.

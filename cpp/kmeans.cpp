@@ -5,6 +5,10 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <pthread.h>
+
+#define MIN(X,Y) ( ((X)<(Y)) ? (X) : (Y) )
+
 #define rep(i,n) for(int i=0; i<(n); i++)
 
 const double inf = std::numeric_limits<double>::max();
@@ -34,7 +38,7 @@ namespace LibAnn {
 
     /* Public functions here */
 
-    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx) {
+    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int nthreads, int *pidx) {
         int m = x->nrows(), n = x->ncols();
 	    int k = initial_centroids->nrows();
 	    if (n != initial_centroids->ncols()) throw "Matrix width mismatch excpetion";
@@ -46,7 +50,7 @@ namespace LibAnn {
 	    matCopy(c, initial_centroids);
 
 	    for (i=0; i<maxIter; i++) {
-	        if (!findClosestCentroids(idx, x, c)) break;
+	        if (!findClosestCentroids(idx, x, c, nthreads)) break;
 	        computeCentroids(c, x, idx, k);
 	    }
 	    matCopy(centers,c);
@@ -123,23 +127,54 @@ namespace LibAnn {
 	delete stdev; delete mean;
     }
 
-    bool findClosestCentroids(int *idx, Mat *x, Mat *centroids) {
-        int x_r=x->nrows() , cent_r= centroids->nrows(), row_min=0;
-        double m,tmp;
-        bool ans = false;
-        rep(i,x_r){
+    struct TCC {
+	int *idx;
+	Mat *x;
+	Mat *c;
+	int from;
+	int to;
+	bool ans;
+    };
+
+    void *threadClosestC(void *p) {
+	TCC *tcc = (TCC*)p;
+	double m,tmp;
+	int row_min=0, cent_r = tcc->c->nrows();
+	tcc->ans = false;
+        for (int i = tcc->from; i < tcc->to; i++) {
             m = inf;
             rep(j,cent_r){
-                tmp = distance(x,centroids,i,j);
+                tmp = distance(tcc->x, tcc->c, i, j);
                 if(tmp<m){
                     m=tmp;
                     row_min=j;
                 }
             }
-            ans |= (idx[i]!=row_min);
-            idx[i]=row_min;
+            tcc->ans |= (tcc->idx[i] != row_min);
+            tcc->idx[i]=row_min;
         }
-        return ans;
+	return 0;
+    }
+
+    bool findClosestCentroids(int *idx, Mat *x, Mat *centroids, int nthreads) {
+      	pthread_t threads[nthreads];
+	TCC params[nthreads];
+	int n = x->nrows(), dn = (n/nthreads) + 1;
+	bool ans=false;
+	rep(i,nthreads) {
+	    params[i].idx = idx;
+	    params[i].x = x;
+	    params[i].c = centroids;
+	    params[i].from = i*dn;
+	    params[i].to = MIN((i+1)*dn,n);
+	    pthread_create(&threads[i], NULL, threadClosestC, (void *)&params[i]);
+	}
+	rep(i,nthreads) {
+	    int rc = pthread_join(threads[i],NULL);
+	    if (rc != 0) throw "Thread exception";
+	    ans |= params[i].ans;
+	}
+	return ans;
     }
 
     void computeCentroids(Mat *centroids, Mat* x, const int *idx, int k) {

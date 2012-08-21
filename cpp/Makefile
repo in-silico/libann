@@ -2,7 +2,7 @@ VERSION=1
 RELEASE=0.1
 DIR=/usr/local/lib
 HDIR=/usr/local/include
-FLAGS=-O2 -Wall -Wextra -fPIC
+FLAGS=-O2 -Wall -Wextra -fPIC -pthread
 SRCF := matrix.cpp kmeans.cpp
 OBJFILES := $(SRCF:.cpp=.o)
 HFILES := $(SRCF:.cpp=.h)
