@@ -26,6 +26,13 @@ void matCopy(Mat *ans, Mat *src) {
 	    ans->get(i,j) = src->get(i,j);
 }
 
+void matCopyRow(Mat *ans, int rans, Mat *src, int rsrc) {
+    if (ans->ncols() != src->ncols()) throw "Matrix width mismatch exception";
+    int m = src->ncols();
+    rep(i,m)
+	ans->get(rans,i) = src->get(rsrc, i);
+}
+
 void Mat::save(const char *fname) {
     FILE *f = fopen(fname, "wb");
     MatFileHead h;

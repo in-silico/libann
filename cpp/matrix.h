@@ -41,6 +41,7 @@ public:
 };
 
 void matCopy(Mat *ans, Mat *src);
+void matCopyRow(Mat *ans, int rans, Mat *src, int rsrc);
 void matMult(Mat *ans, Mat *a, Mat *b);
 bool matInv(Mat *ans, Mat *x);
 bool matPinv(Mat *ans, Mat *x);

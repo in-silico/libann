@@ -24,6 +24,11 @@ namespace LibAnn {
     void kmeansInit(Mat *centroids, Mat *x, int k);
 
     /**
+     * Creates a random permutation of length k out of n elements
+     */
+    void randPerm(int *ans, int k, int n);
+
+    /**
      * Computes the standar deviation and mean vector of each column of x into ans
      */
     void stdv(Mat *stdev, Mat *mean, Mat *x);
