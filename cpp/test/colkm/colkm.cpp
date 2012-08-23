@@ -17,8 +17,9 @@
 using namespace std;
 using namespace LibAnn;
 
-int K,MaxIter,ntimes,sampleSize;
+int K,ntimes,sampleSize;//int MaxIter
 Mat *bigmat;
+KMeansConf conf;
 
 void printMat(Mat *x) {
     rep(i,x->nrows()) {
@@ -84,7 +85,7 @@ void runkm( ) {
 	    kmeansInit(tmp,bigmat,K);
 
             //kmeans(tmp,bigmat,tmp,MaxIter,2,idx);
-	    kmeans(tmp,bigmat,tmp,MaxIter,idx);
+	    kmeans(tmp,bigmat,tmp,&conf);
 
             current = kmeansError(tmp,bigmat);
             if (current < best) {
@@ -105,21 +106,22 @@ int main(int argc, char **argv) {
     try {
         time_t start, end;
         K = 16; //Default value of K
-        MaxIter = 200; //Default of maxIter
+        //MaxIter = 200; //Default of maxIter
         ntimes = 1; //Default of ntimes
 	sampleSize = -1; //Take the complete set as a sample
         bigmat = new Mat(100000000);
         bigmat->setSize(0,3);
         if (argc < 2) {
-	    printf("Usage: %s (-K <# of clusters>) (-I <max Iter>) (-T <# of times>) (-S <sampleSize>) <image1> (<image_i>*)\n", argv[0]);
+	    printf("Usage: %s (-K <# of clusters>) (-I <max Iter>) (-T <# of times>) (-N <# of threads>) (-S <sampleSize>) <image1> (<image_i>*)\n", argv[0]);
 	    return 1;
         }
         argc--; argv++;
         rep(i,argc) {
 	    if (strcmp(argv[i],"-K")==0) sscanf(argv[++i],"%d",&K);
-	    else if (strcmp(argv[i],"-I")==0) sscanf(argv[++i],"%d",&MaxIter);
+	    else if (strcmp(argv[i],"-I")==0) sscanf(argv[++i],"%d",&(conf.maxIter));
             else if (strcmp(argv[i],"-T")==0) sscanf(argv[++i],"%d",&ntimes);
 	    else if (strcmp(argv[i],"-S")==0) sscanf(argv[++i],"%d",&sampleSize);
+	    else if (strcmp(argv[i],"-N")==0) sscanf(argv[++i],"%d",&(conf.nthreads));
 	    else appendMatrix(argv[i]);
         }
 	takeSample(bigmat, bigmat);
