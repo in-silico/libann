@@ -5,13 +5,25 @@
 
 namespace LibAnn {
 
+    struct KMeansConf {
+	int maxIter;
+	int *pidx;
+	int nthreads;
+
+	KMeansConf() {
+	    maxIter=100;
+	    pidx=0;
+	    nthreads=1;
+	}
+    };
+
     /**
      * Runs the k-means algorithm over the given data matrix x (Each column is a instance)
      * and returns a k column vector with the chosen centers. It iterates until each data instance does
      * not change of center or for maxIter iterations.
      */
-    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx=0);
-
+    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, KMeansConf *conf=0);
+     
     /**
      * Compute the mean squared error of projecting x on centers
      */

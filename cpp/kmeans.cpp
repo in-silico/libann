@@ -34,26 +34,31 @@ namespace LibAnn {
 
     /* Public functions here */
 
-    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, int maxIter, int *pidx) {
+    int kmeans(Mat *centers, Mat *x, Mat *initial_centroids, KMeansConf *conf) {
         int m = x->nrows(), n = x->ncols();
-	    int k = initial_centroids->nrows();
-	    if (n != initial_centroids->ncols()) throw "Matrix width mismatch excpetion";
+	int k = initial_centroids->nrows();
+	if (n != initial_centroids->ncols()) throw "Matrix width mismatch excpetion";
 	
-	    Mat *c = new Mat(k*n);
-	    int *idx; int i;
-	    if (pidx==0) idx = new int[m];
-	    else idx = pidx;
-	    matCopy(c, initial_centroids);
+	Mat *c = new Mat(k*n);
+	int *idx; int i;
+	int *pidx=0; int maxIter=100;
+	if (conf != 0) {
+	    pidx = conf->pidx;
+	    maxIter = conf->maxIter;
+	}
+	if (pidx==0) idx = new int[m];
+	else idx = pidx;
+	matCopy(c, initial_centroids);
 
-	    for (i=0; i<maxIter; i++) {
-	        if (!findClosestCentroids(idx, x, c)) break;
-	        computeCentroids(c, x, idx, k);
-	    }
-	    matCopy(centers,c);
+	for (i=0; i<maxIter; i++) {
+	    if (!findClosestCentroids(idx, x, c)) break;
+	    computeCentroids(c, x, idx, k);
+	}
+	matCopy(centers,c);
 
-	    if (pidx == 0) delete idx;
-	    delete c; 
-	    return i;
+	if (pidx == 0) delete idx;
+	delete c; 
+	return i;
     }
 
     double kmeansError(Mat *centers, Mat *x) {
