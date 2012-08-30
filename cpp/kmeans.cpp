@@ -141,7 +141,7 @@ namespace LibAnn {
 	    int v = rand() % i;
 	    int ix = getind(v) + 1;
 	    set(ix,-1); //add -1 (set to zero)
-	    ans[n-i] = ix;
+	    ans[n-i] = ix-1;
 	    if ((n-i)>=k) break;
 	}
 	delete tree;
