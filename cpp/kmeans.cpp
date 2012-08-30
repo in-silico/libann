@@ -10,6 +10,9 @@
 #define MIN(X,Y) ( ((X)<(Y)) ? (X) : (Y) )
 
 #define rep(i,n) for(int i=0; i<(n); i++)
+#define rep2(i,n) for(int i=0; i<=(n); i++)
+#define repf(i,a,b) for(int i=(a); i<=(b); i++)
+#define repb(i,a,b) for (int i=(a); i>=b; i--)
 
 const double inf = std::numeric_limits<double>::max();
 
@@ -83,16 +86,66 @@ namespace LibAnn {
 		dest->get(r_dest,i) = ori->get(r_ori,i);
     }
 
-    void randPerm(int *ans, int k, int n) {	
-	rep(i,k) {
-	    int x; bool used;
-	    do {
-		x = rand()%n;
-		used=false;
-		rep(j,i) if (x==ans[j]) used=true;
-	    } while (used);
-	    ans[i]=x;
+    int *tree;
+    int N;
+
+    int log2ceil(int x) {
+	int ans=0;
+	while (x>0) {
+	    x = x>>1;
+	    ans++;
 	}
+	return ans;
+    }
+
+    // add v to value at x
+    void set(int x, int v) {
+	while(x <= N) {
+	    tree[x] += v;
+	    x += (x & -x);
+	}
+    }
+
+    // get cumulative sum up to and including x
+    int get(int x) {
+	int res = 0;
+	while(x) {
+	    res += tree[x];
+	    x -= (x & -x);
+	}
+	return res;
+    }
+
+    // get largest value with cumulative sum less than or equal to x;
+    // for smallest, pass x-1 and add 1 to result
+    int getind(int x) {
+	int idx = 0, mask = N;
+	while(mask && idx < N) {
+	    int t = idx + mask;
+	    if(x >= tree[t]) {
+		idx = t;
+		x -= tree[t];
+	    }
+	    mask >>= 1;
+	}
+	return idx;
+    }
+
+    void randPerm(int *ans, int k, int n) {
+	int ls = log2ceil(n);
+	tree = new int[(1<<ls)+1];
+	N = (1<<ls);
+	rep(i,n) tree[i]=0;
+	rep(i,n) set(i+1,1);
+	srand(time(0));
+	repb(i,n,1) {
+	    int v = rand() % i;
+	    int ix = getind(v) + 1;
+	    set(ix,-1); //add -1 (set to zero)
+	    ans[n-i] = ix-1;
+	    if ((n-i)>=k) break;
+	}
+	delete tree;
     }
 
     void kmeansInit(Mat *centroids, Mat *x, int k) {
