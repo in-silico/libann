@@ -56,7 +56,7 @@ namespace LibAnn {
 	matCopy(c, initial_centroids);
 
 	for (i=0; i<maxIter; i++) {
-	    if (!findClosestCentroids(idx, x, c, nthreads)) break;
+	    if (!findClosestCentroids(idx, x, c,nthreads)) break;
 	    computeCentroids(c, x, idx, k, nthreads);
 	}
 	matCopy(centers,c);
