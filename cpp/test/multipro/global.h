@@ -51,4 +51,4 @@ void printMat(Mat *x) {
     printf("\n");
 }
 
-#endif GLOBALH
+#endif

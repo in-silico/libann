@@ -1,6 +1,6 @@
 FLAGS := -O2 -Wall -Wextra
 LFLAGS := -I/usr/include/opencv -lml -lcvaux -lhighgui -lcv -lcxcore -lutpann
-SRCF := colkm.cpp applyColors.cpp
+SRCF := kmeans.cpp
 OBJFILES := $(SRCF:.cpp=.o)
 HFILES := $(SRCF:.cpp=.h)
 CC := g++
