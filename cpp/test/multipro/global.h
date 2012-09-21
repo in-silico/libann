@@ -2,6 +2,13 @@
 #include <string>
 #include <map>
 
+using namespace std;
+
+#define rep(i,n) for(int i=0; i<(n); i++)
+#define rep2(i,n) for(int i=0; i<=(n); i++)
+#define repf(i,a,b) for(int i=(a); i<=(b); i++)
+#define repb(i,a,b) for (int i=(a); i>=b; i--)
+
 class Config {
     map<string,string> tabla;
     public:
