@@ -58,4 +58,17 @@ void printMat(Mat *x) {
     printf("\n");
 }
 
+void appendMat(Mat *ans, Mat *tmp) {
+    if (ans->ncols() != tmp->ncols()) throw "Wrong matrix dimensions, cannot be appended";
+    int m = ans->ncols();
+    int n = tmp->nrows();
+    int offset = ans->nrows();
+    ans->setSize(offset+n,m);
+    rep(i,n) {
+	rep(j,m) {
+	    ans->get(i+offset,j) = tmp->get(i,j);
+	}
+    }
+}
+
 #endif
