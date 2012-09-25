@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 	K = 16; //Default value of K
 	//MaxIter = 200; //Default of maxIter
 	ntimes = 1; //Default of ntimes
-	matsize = 10000;
+	matsize = 1000000;
 	bigmat = new Mat(matsize);
 	bigmat->setSize(0,3);
 	if (argc < 2) {

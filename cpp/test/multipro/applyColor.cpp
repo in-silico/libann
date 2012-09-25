@@ -11,11 +11,12 @@ using namespace LibAnn;
 #define repf(i,a,b) for(int i=(a); i<=(b); i++)
 #define repb(i,a,b) for (int i=(a); i>=b; i--)
 
-int MaxVal = 500;
-int MaxCen = 500;
+int MaxVal = 10000000;
+int MaxCen = 50000;
 
-int * applyColor(Mat *ori, Mat *centroids, Mat *dest){
-    int *idx = new int[ori->ncols()];
+int * applyColor(Mat *ori, Mat *centroids, Mat *dest) {
+    dest->setSize(ori->nrows(),ori->ncols());
+    int *idx = new int[ori->nrows()];
     findClosestCentroids(idx,ori,centroids);
     for(int i=0; i< ori->nrows(); ++i)
         matCopyRow(dest,i,centroids,idx[i]);
@@ -34,21 +35,26 @@ void saveid(int *idx,string name,int Sizeidx){
 
 
 
-int main(int argc , char **argv){
-    if(argc != 5){
+int main(int argc , char **argv) {
+    try {
+	if(argc != 5){
 	    printf("Usage: %s <option> (-i intmat, -c colormat) <orgImg> <centroids> <destImg>\n", argv[0]);
 	    return 1;
+	}
+
+	Mat *ori = new Mat(MaxVal);
+	ori->load(argv[2]);
+	Mat *centroids = new Mat(MaxCen);
+	centroids->load(argv[3]);
+	Mat *dest = new Mat(MaxVal);
+
+	int *idx = applyColor(ori,centroids,dest);
+	if (argv[1][1] == 'c') dest->save(argv[4]);
+	else saveid(idx,argv[4],ori->nrows());
+
+	return 0;
+    } catch (const char *s) {
+	fprintf(stderr,"Exception: %s\n",s);
+	return 1;
     }
-    
-    Mat *ori = new Mat(MaxVal);
-    ori->load(argv[2]);
-    Mat *centroids = new Mat(MaxCen);
-    centroids->load(argv[3]);
-    Mat *dest = new Mat(MaxVal);
-    
-    int *idx = applyColor(ori,centroids,dest);
-    if (argv[1][0] == 'c') dest->save(argv[4]);
-    else saveid(idx,argv[4],ori->nrows());
-    
-    return 0;
 }
