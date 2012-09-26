@@ -66,11 +66,60 @@ void rgb2xy(Mat *dest, Mat *org) {
     delete Yxy;
 }
 
-void readParams() {
+void Yxy2rgb(Mat *dest, Mat *org) {
+    int n = org->nrows();
+    rep (i,n) {
+	double Y = org->get(i,0);
+	double x = org->get(i,1);
+	double y = org->get(i,2);
+	double z = 1-x-y;
+	double den = Y/y;
+	dest->get(i,0) = den*x;
+	dest->get(i,1) = Y;
+	dest->get(i,2) = den*z;
+    }
+    XYZ2rgb(dest,dest);
 }
 
-int main() {
-    c = new Config("colorm.conf");
-    readParams();
-    delete c;
+void xy2rgb(Mat *dest, Mat *org) {
+    double defY;
+    sscanf(c->getVal("defY").c_str(),"%lf",&defY);
+    int n = org->nrows();
+    Mat *Yxy = new Mat(3*n);
+    Yxy->setSize(n,3);
+    rep(i,n) {
+	Yxy->get(i,0) = defY;
+	rep(j,2) Yxy->get(i,j+1) = org->get(i,j);
+    }
+    Yxy2rgb(dest,Yxy);
+    delete Yxy;
+}
+
+int main(int argc, char **argv) {
+    if (argc == 1) {
+	printf("Usage: %s <mode> <inMat> <outMat>\n",argv[0]);
+	printf("Modes: rgb2xy xy2rgb\n");
+	return 1;
+    }
+    try {
+	c = new Config("colorm.conf");
+	int matSize = atof(c->getVal("matSize").c_str());
+	Mat *m1 = new Mat(matSize);
+	Mat *m2 = new Mat(matSize);
+	m1->load(argv[2]);
+	if ( strcmp(argv[1],"rgb2xy")==0 ) {
+	    rgb2xy(m2,m1);
+	} else if (strcmp(argv[1],"xy2rgb") == 0) {
+	    xy2rgb(m2,m1);
+	} else {
+	    fprintf(stderr,"Not recognized model %s\n",argv[1]);
+	    return 1;
+	}
+	m2->save(argv[3]);
+	delete c; delete m1; delete m2;
+    } catch (const char *s) {
+	fprintf(stderr,"Exception: %s\n",s);
+	return 2;
+    }
+    return 0;
 }
