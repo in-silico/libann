@@ -62,12 +62,13 @@ void rgb2xy(Mat *dest, Mat *org) {
     Mat *Yxy = new Mat(3*n);
     rgb2Yxy(Yxy,org);
     dest->setSize(n,2);
-    rep(i,n) rep(j,2) dest->get(i,j) = org->get(i,j+1);
+    rep(i,n) rep(j,2) dest->get(i,j) = Yxy->get(i,j+1);
     delete Yxy;
 }
 
 void Yxy2rgb(Mat *dest, Mat *org) {
     int n = org->nrows();
+    dest->setSize(n,3);
     rep (i,n) {
 	double Y = org->get(i,0);
 	double x = org->get(i,1);
@@ -98,7 +99,7 @@ void xy2rgb(Mat *dest, Mat *org) {
 int main(int argc, char **argv) {
     if (argc == 1) {
 	printf("Usage: %s <mode> <inMat> <outMat>\n",argv[0]);
-	printf("Modes: rgb2xy xy2rgb\n");
+	printf("Modes: rgb2xy xy2rgb Yxy2rgb rgb2Yxy\n");
 	return 1;
     }
     try {
@@ -111,6 +112,10 @@ int main(int argc, char **argv) {
 	    rgb2xy(m2,m1);
 	} else if (strcmp(argv[1],"xy2rgb") == 0) {
 	    xy2rgb(m2,m1);
+	} else if (strcmp(argv[1],"rgb2Yxy") == 0) {
+	    rgb2Yxy(m2,m1);
+	} else if (strcmp(argv[1],"Yxy2rgb") == 0) {
+	    Yxy2rgb(m2,m1);
 	} else {
 	    fprintf(stderr,"Not recognized model %s\n",argv[1]);
 	    return 1;
