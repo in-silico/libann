@@ -115,7 +115,7 @@ void takeSample(Mat *ans, Mat *x, int sampleSize) {
 }
 
 void doImg2Mat(char **imgnames, int imgc) {
-    Mat *bigmat = new Mat(10000000);
+    Mat *bigmat = new Mat(100000000);
     bigmat->setSize(0,3);
     rep (i,imgc) {
 	Mat *tmp = img2mat(imgnames[i]);
@@ -131,12 +131,17 @@ int main(int argc, char **argv) {
 	printf("Usage: %s (<options>) <image>*\n",argv[0]);
 	return 1;
     }
-    argc--; argv++;
-    int tmp = readOptions(argc,argv);
-    if (opt.inverse) {
-	doInverse(argv[tmp]);
-    } else {
-	doImg2Mat(argv+tmp,argc-tmp);
+    try {
+	argc--; argv++;
+	int tmp = readOptions(argc,argv);
+	if (opt.inverse) {
+	    doInverse(argv[tmp]);
+	} else {
+	    doImg2Mat(argv+tmp,argc-tmp);
+	}
+	return 0;
+    } catch (const char *s) {
+	fprintf(stderr,"Exception: %s\n",s);
+	return 1;
     }
-    return 0;
 }
