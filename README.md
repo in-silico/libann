@@ -15,7 +15,7 @@ Go to the cpp directory, and use the "make" command for compilation.
 	$ cd cpp/
 	$ make
 
-You sloud see some like this:
+You should see some like this:
 
 	g++ -O2 -Wall -Wextra -fPIC -c -o matrix.o matrix.cpp
 	g++ -O2 -Wall -Wextra -fPIC -c -o kmeans.o kmeans.cpp
