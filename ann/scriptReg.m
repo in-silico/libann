@@ -1,17 +1,17 @@
 clear all;
 close all;
 M=400;
-N=10;
+N=30;
 
 Xt = linspace(0,2*pi,M)';
-tt = [sin(Xt),cos(Xt)];
+tt = [sin(Xt),cos(Xt),log(Xt+1)];
 
 ix = randperm(M);
 ix = ix(1:N);
 X = Xt(ix,:);
 t = tt(ix,:) + (rand(N,size(tt,2))-0.5)*0.3;
 
-nn = createnn(1,3,2);
+nn = createnn(1,5,3);
 compnn = @(nn1,X1)(regnn(nn1,X1));
 errnn = @(nn1,X1,R1)(regerrnn(nn1,X1,R1));
 wv=[nn.W(:);nn.V(:)];
