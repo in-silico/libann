@@ -32,13 +32,14 @@ function [E,grad] = nngrad(wv,nn,X,R,compnn,errnn)
 	    for t = 1:N
 		tmp=0;
 		for i = 1:K
-		    tmp = tmp + (Y(t,i) - R(t,i))*V(i,h);
+		    tmp = tmp + (R(t,i) - Y(t,i))*V(i,h+1);
 		end
 		tmp2 = Z(t,h)*(1-Z(t,h))*Xt(t,j);
-		deltaW += tmp*tmp2;
+		deltaW(h,j) += tmp*tmp2;
 	    end
 	end
     end
+    deltaW = deltaW*-1;
 
     E = errnn(nn,X,R);
     grad = [deltaW(:);deltaV(:)];

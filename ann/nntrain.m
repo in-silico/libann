@@ -1,4 +1,4 @@
-function [nn] = nntrain(nn,X,R,iter,compnn,errnn)
+function [nn2] = nntrain(nn,X,R,iter,compnn,errnn)
     w = nn.W(:);
     v = nn.V(:);
     D = size(X,2);
@@ -16,6 +16,6 @@ function [nn] = nntrain(nn,X,R,iter,compnn,errnn)
     wv = fmincg(@(x)(nngrad(x,nn,X,R,compnn,errnn)),tmp,options);
     w = wv(1:splitp);
     v = wv(splitp+1:end);
-    nn.W = reshape(w,H,D+1);
-    nn.V = reshape(v,K,H+1);
+    nn2.W = reshape(w,H,D+1);
+    nn2.V = reshape(v,K,H+1);
 end
