@@ -20,7 +20,7 @@ wv=[nn.W(:);nn.V(:)];
 nn = nntrain(nn,X,Y,400,compnn,errnn);
 y = classnn(nn,X);
 
-ym = max(y')';
-Yp = (Y == (repmat(ym,1,4)));
+ym = max(y')'-0.01;
+Yp = (Y >= (repmat(ym,1,4)));
 errors = sum(sum(Y ~= Yp))/2;
 printf("Error: %f\n",errors/N);
