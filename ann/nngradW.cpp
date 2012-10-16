@@ -12,6 +12,9 @@ DEFUN_DLD(nngradW, args, , "Return the gradient given Y, R, Z, V and Xt") {
     int N = Y.rows();
     int D = Xt.cols() - 1;
     Matrix dW (H,D+1);
+    for (int h=0; h<H; h++)
+	for (int d=0; d<(D+1); d++)
+	    dW(h,d)=0.0;
     for (int t=0; t<N; t++) {
 	for (int h=0; h<H; h++) {
 	    for (int j=0; j<(D+1); j++) {

@@ -15,7 +15,6 @@ nn = createnn(1,5,3);
 compnn = @(nn1,X1)(regnn(nn1,X1));
 errnn = @(nn1,X1,R1)(regerrnn(nn1,X1,R1));
 wv=[nn.W(:);nn.V(:)];
-[E,grad] = nngrad(wv,nn,X,t,compnn,errnn);
 nn = nntrain(nn,X,t,400,compnn,errnn);
 y = regnn(nn,Xt);
 

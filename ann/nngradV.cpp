@@ -11,6 +11,9 @@ DEFUN_DLD(nngradV, args, , "Return the gradient given Y, R, Z homogCoord and V")
     int H = V.cols()-1;
     int N = Y.rows();
     Matrix dV (K,H+1);
+    for (int k=0; k<K; k++)
+	for (int h=0; h<(H+1); h++)
+	    dV(k,h)=0.0;
     for (int t=0; t<N; t++) {
 	for (int i=0; i<K; i++) {
 	    for (int h=0; h<(H+1); h++) {

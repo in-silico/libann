@@ -18,7 +18,7 @@ function [E,grad] = nngrad(wv,nn,X,R,compnn,errnn)
     deltaV = nngradV(Y,R,Zt,V); 
 
     Xt = [ones(N,1) X];
-    deltaW = nngradW(Y,R,Z,V,Xt);
+    deltaW = tmpgradW(Y,R,Z,V,Xt);
 
     E = errnn(nn,X,R);
     grad = [deltaW(:);deltaV(:)];
