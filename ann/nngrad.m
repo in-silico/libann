@@ -15,31 +15,10 @@ function [E,grad] = nngrad(wv,nn,X,R,compnn,errnn)
     [Y,Z] = compnn(nn,X);
 
     Zt = [ones(N,1) Z];
-    deltaV = zeros(K,H+1);
-    for i = 1:K
-	for h = 1:(H+1)
-	    for t = 1:N
-		tmp = (Y(t,i) - R(t,i)) * Zt(t,h);
-		deltaV(i,h) = deltaV(i,h) + tmp;
-	    end
-	end
-    end
+    deltaV = nngradV(Y,R,Zt,V); 
 
     Xt = [ones(N,1) X];
-    deltaW = zeros(H,D+1);
-    for h = 1:H
-	for j = 1:D+1
-	    for t = 1:N
-		tmp=0;
-		for i = 1:K
-		    tmp = tmp + (R(t,i) - Y(t,i))*V(i,h+1);
-		end
-		tmp2 = Z(t,h)*(1-Z(t,h))*Xt(t,j);
-		deltaW(h,j) += tmp*tmp2;
-	    end
-	end
-    end
-    deltaW = deltaW*-1;
+    deltaW = nngradW(Y,R,Z,V,Xt);
 
     E = errnn(nn,X,R);
     grad = [deltaW(:);deltaV(:)];
