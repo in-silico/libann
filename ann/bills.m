@@ -15,12 +15,17 @@ for n = 1:Nv
     Rv(n,t1v(n)+1) = 1;
 end
 
-hiddenNeurons = 10;
-nn = createnn(size(X,2),hiddenNeurons,K);
+hiddenNeurons = 8:10;
+iters = [500,1000];
+%nn = createnn(size(X,2),hiddenNeurons,K);
 compnn = @(nn1,X1)(classnn(nn1,X1));
 errnn = @(nn1,X1,R1)(classerrnn(nn1,X1,R1));
-wv=[nn.W(:);nn.V(:)];
-nn = nntrain(nn,X,R,2000,compnn,errnn);
+%wv=[nn.W(:);nn.V(:)];
+%nn = nntrain(nn,X,R,2000,compnn,errnn);
+[nns,jval,jt] = nnmfit(X,R,Xv,Rv,5,iters,hiddenNeurons,errnn,compnn);
+%jval
+%[r,c] = find( jval == min(min(jval)) )
+nn = nns(r,c);
 y = classnn(nn,X);
 
 ym = max(y')'-0.01;
