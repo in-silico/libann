@@ -9,8 +9,8 @@ function [nn2] = nntrain(nn,X,R,iter,compnn,errnn)
     splitp = H*(D+1);
 
     tmp = [w;v];
-    [j,grad1] = nngrad(tmp,nn,X,R,compnn,errnn)
-    grad2 = computeNumericalGradient(@(t)(errNumGrad(t,nn,X,R,errnn)),tmp)
+    %[j,grad1] = nngrad(tmp,nn,X,R,compnn,errnn)
+    %grad2 = computeNumericalGradient(@(t)(errNumGrad(t,nn,X,R,errnn)),tmp)
 
     options = optimset('GradObj', 'on', 'MaxIter', iter);
     wv = fmincg(@(x)(nngrad(x,nn,X,R,compnn,errnn)),tmp,options);
