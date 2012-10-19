@@ -10,7 +10,7 @@ function [nns,Jvals,Jtrain] = nnmfit(Xt,Yt,Xv,Yv,ntimes,iter,hidden,errnn,compnn
 
     nhv = length(hidden);
     niv = length(iter);
-    nns = Jvals = Jtrain = zeros(niv,nhv);
+    Jvals = Jtrain = zeros(niv,nhv);
     for i = 1:niv
 	for h = 1:nhv
 	    jtm = 1e100; %infinity
@@ -24,7 +24,7 @@ function [nns,Jvals,Jtrain] = nnmfit(Xt,Yt,Xv,Yv,ntimes,iter,hidden,errnn,compnn
 		    nnm = nn;
 		end
 	    end
-	    %nns(i,h) = nnm; search how to create matrix of structures
+	    nns(i,h) = nnm; 
 	    Jtrain(i,h) = jtm;
 	    Jvals(i,h) = errnn(nnm,Xv,Yv);
 	end
