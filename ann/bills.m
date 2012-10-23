@@ -1,9 +1,10 @@
 close all;
 clear all;
 
-TS = load('bills.txt');
-VS = load('billval.txt');
-K = 6;
+tmp = load('bills.txt');
+[TS,VS,tmp] = splitSet(tmp,tmp(:,1),0.9,0.1);
+
+K = unique(tmp(:,1));
 t1 = TS(:,1); t1v=VS(:,1);
 X = TS(:,2:end); Xv=VS(:,2:end);
 N = size(X,1); Nv=size(Xv,1);
