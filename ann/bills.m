@@ -4,7 +4,7 @@ clear all;
 tmp = load('bills.txt');
 [TS,VS,tmp] = splitSet(tmp,tmp(:,1),0.9,0.1);
 
-K = unique(tmp(:,1));
+K = length(unique(tmp(:,1)));
 t1 = TS(:,1); t1v=VS(:,1);
 X = TS(:,2:end); Xv=VS(:,2:end);
 N = size(X,1); Nv=size(Xv,1);
@@ -16,14 +16,14 @@ for n = 1:Nv
     Rv(n,t1v(n)+1) = 1;
 end
 
-hiddenNeurons = 8:10;
-iters = [500,1000];
+hiddenNeurons = 10:11;
+iters = [500,800];
 %nn = createnn(size(X,2),hiddenNeurons,K);
 compnn = @(nn1,X1)(classnn(nn1,X1));
 errnn = @(nn1,X1,R1)(classerrnn(nn1,X1,R1));
 %wv=[nn.W(:);nn.V(:)];
 %nn = nntrain(nn,X,R,2000,compnn,errnn);
-[nns,jval,jt] = nnmfit(X,R,Xv,Rv,5,iters,hiddenNeurons,errnn,compnn);
+[nns,jval,jt] = nnmfit(X,R,Xv,Rv,1,iters,hiddenNeurons,errnn,compnn);
 %jval
 %[r,c] = find( jval == min(min(jval)) )
 nn = nns(r,c);
