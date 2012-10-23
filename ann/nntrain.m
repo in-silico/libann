@@ -13,7 +13,9 @@ function [nn2] = nntrain(nn,X,R,iter,compnn,errnn)
     %grad2 = computeNumericalGradient(@(t)(errNumGrad(t,nn,X,R,errnn)),tmp)
 
     options = optimset('GradObj', 'on', 'MaxIter', iter);
+    tic
     wv = fmincg(@(x)(nngrad(x,nn,X,R,compnn,errnn)),tmp,options);
+    toc
     w = wv(1:splitp);
     v = wv(splitp+1:end);
     nn2.W = reshape(w,H,D+1);
