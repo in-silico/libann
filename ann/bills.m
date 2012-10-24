@@ -2,9 +2,9 @@ close all;
 clear all;
 
 tmp = load('bills.txt');
-[TS,VS,tmp] = splitSet(tmp,tmp(:,1),0.9,0.1);
+[TS,VS,tmp1] = splitSet(tmp,tmp(:,1),0.9,0.1);
 
-K = length(unique(tmp(:,1)));
+K = length(unique(TS(:,1)));
 t1 = TS(:,1); t1v=VS(:,1);
 X = TS(:,2:end); Xv=VS(:,2:end);
 N = size(X,1); Nv=size(Xv,1);
@@ -15,6 +15,8 @@ end
 for n = 1:Nv
     Rv(n,t1v(n)+1) = 1;
 end
+
+S = plotPCA(X, t1, 2);
 
 hiddenNeurons = [12,15,20];
 iters = [600,1000];
