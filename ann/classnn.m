@@ -1,15 +1,15 @@
-function [Y,Z] = classnn(nn,X)
+function [a3,Z,a2,a1,z3,z2] = classnn(nn,X)
     W = nn.W;
     V = nn.V;
-
     N = size(X,1);
-    Xr = [ones(N,1) X];
-    U1 = Xr*W';
-    Z = sigmoid(U1);
-    Zr = [ones(N,1) Z];
-    U2 = Zr*V';
+
+    a1 = [ones(N,1) X];
+    z2 = a1 * W';
+    Z = sigmoid(z2);
+    a2 = [ones(N,1) Z];
+    z3 = a2 * V';
 
     %Apply softmax to U2
-    Y = exp(U2);
-    Y = Y ./ repmat(sum(Y,2),1,size(Y,2));
+    a3 = exp(z3);
+    a3 =  a3 ./ repmat(sum(a3,2),1,size(a3,2));
 end
