@@ -19,12 +19,16 @@ function [ Xtrain, XCVal, Xtest ] = splitSet( X, t, qTrain, qCVal )
 		tmp = X(t==i,:);
 		n = size(tmp,1);
 		randX = randperm(n)';
-		nt = uint32(n*qTrain);
-		nv = nt + uint32(n*qCVal);
+		nt = floor(n*qTrain);
+		nv = nt + floor(n*qCVal);
 	
 		Xtrain = [Xtrain; tmp(randX(     1:nt,:),:)];
-		XCVal  = [XCVal ; tmp(randX(nt + 1:nv,:),:)];
-		Xtest  = [Xtest ; tmp(randX(nv + 1:end ,:),:)];
+		if (nv > nt)
+		    XCVal  = [XCVal ; tmp(randX(nt + 1:nv,:),:)];
+		end
+		if (nv < length(randX))
+		    Xtest  = [Xtest ; tmp(randX(nv + 1:end ,:),:)];
+		end
 	end
 end
 
