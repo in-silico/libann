@@ -12,7 +12,7 @@ function [E,grad] = nngrad(wv,nn,X,R,compnn,errnn)
     W = nn.W;
     V = nn.V;
    
-    %{
+    
     [Y,Z] = compnn(nn,X);
 
     Zt = [ones(N,1) Z];
@@ -20,14 +20,16 @@ function [E,grad] = nngrad(wv,nn,X,R,compnn,errnn)
 
     Xt = [ones(N,1) X];
     deltaW = nngradW(Y,R,Z,V,Xt);
-    %}
+    
+    %{
     [a3,Z,a2,a1,z3,z2] = compnn(nn,X);
     d3 = a3 - R;
     d2 = d3 * V(:,2:end) .* sigmoidGradient(z2);
 
     deltaV = d3'*a2;
     deltaW = d2'*a1;
-
+    %}
     E = errnn(nn,X,R);
     grad = [deltaW(:);deltaV(:)];
+    
 end

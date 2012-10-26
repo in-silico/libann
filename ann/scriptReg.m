@@ -1,7 +1,7 @@
 clear all;
 close all;
 M=400;
-N=30;
+N=10;
 
 Xt = linspace(0,2*pi,M)';
 tt = [sin(Xt),cos(Xt),log(Xt+1)];
