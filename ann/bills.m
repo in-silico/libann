@@ -20,6 +20,7 @@ S = plotPCA(X, t1, 2);
 
 hiddenNeurons = [12,15,20];
 iters = [600,1000];
+
 %nn = createnn(size(X,2),hiddenNeurons,K);
 compnn = @(nn1,X1)(classnn(nn1,X1));
 errnn = @(nn1,X1,R1)(classerrnn(nn1,X1,R1));
