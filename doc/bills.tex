@@ -1,0 +1,49 @@
+\documentclass{article}
+
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{verbatim}
+\usepackage{algpseudocode}
+\usepackage{natbib}
+\usepackage{url}
+
+\begin{document}
+
+\title{Paper currency recognition with color histograms}
+\author{Sebastian Gomez \\ Tatiana Lopez}
+\maketitle
+
+\begin{abstract}
+This document shows an approach to make a color histogram based classification of paper currency from an image.
+%todo:Terminar abstract
+\end{abstract}
+
+\section{Introduction}
+For blind people in many countries it is hard to recognize the denomination of their local paper currency because
+there are not enough non optic features in the bills. It would be useful for them to have automated software that
+can recognize the currency denomination from an image.
+
+There are several publications on these kinds of systems. %todo: Mention them
+
+Our approach uses only color information, but the accuracy might be improved by adding features that make use of
+texture information.
+
+\section{The classification system}
+
+%feature extraction
+RGB is a color model that expresses the color of each pixel as a vector in a 3-Dimensional space, whose components
+represent the proportion of red, green and blue respectively. This model is widely used for screens, cameras and
+other optical devices but its disadvantage is that it mixes color and brightness.
+
+There are other color models such as Yxy from cielab that separate brightness and color in different channels. In
+this system we used Yxy dropping the brightness channel. This decision was taken to generate brightness invariance
+in the feature vectors. %continue the idea
+
+%classification systems
+
+\section{Results}
+
+\section{Conclusions}
+
+\end{document}
