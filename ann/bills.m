@@ -1,6 +1,11 @@
+%Color histogram based NN classification of paper currency from an image.
+
 close all;
 clear all;
 
+%Load the features of the bills dataset with the following format
+%[classNumber F1 F2 .. F8]
+%and splits it into a Training set and a Validation set
 tmp = load('bills.txt');
 [TS,VS,tmp1] = splitSet(tmp,tmp(:,1),0.9,0.1);
 
@@ -16,6 +21,7 @@ for n = 1:Nv
     Rv(n,t1v(n)+1) = 1;
 end
 
+%Dimensionality reduction for 2D plotting
 S = plotPCA(X, t1, 2);
 
 hiddenNeurons = [12,15,20];

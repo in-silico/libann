@@ -1,4 +1,7 @@
 function [J] = errNumGrad(theta,nn,X,R,errnn)
+	%ERRNUMGRAD Calculates the error function given by errnn for 
+	%the neural network.
+
     D = size(X,2);
     N = size(X,1);
     K = size(nn.V,1);

@@ -1,4 +1,7 @@
 function [E,grad] = nngrad(wv,nn,X,R,compnn,errnn)
+%NNGRAD Implements the neural network cost function for a two layer
+%neural network which performs classification.
+
     D = size(X,2);
     N = size(X,1);
     K = size(nn.V,1);
