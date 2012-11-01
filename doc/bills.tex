@@ -92,7 +92,7 @@ each iteration. Let $W_{ij}$ be the weight of the input value $j$ to the hidden 
 the weight of the hidden neuron output $j$ to the output neuron $i$. Then the gradients are computed as:
 
 \begin{align}
-\Delta V_{ij} &= \sum_{t=1}^{N}{ \sum_{i=1}^{K}{ \sum_{h=1}^{H+1}{(Y_{ti} - R{ti}) \hat{Z}_{th}} } } \label{eq:gradV} \\ 
+\Delta V_{ij} &= \sum_{t=1}^{N}{ \sum_{i=1}^{K}{ \sum_{h=1}^{H+1}{(Y_{ti} - R_{ti}) \hat{Z}_{th}} } } \label{eq:gradV} \\ 
 \Delta W_{ij} &= \sum_{t=1}^{N}{ \sum_{h=1}^{H}{ \sum_{j=1}^{D+1}{
     \left[ Z_{th}(1 - Z_{th})\hat{X}_{tj} \sum_{i=1}^{K}{ (Y_{ti} - R_{ti})V_{i(h+1)} } \right]
 } } } \label{eq:gradW}
@@ -103,7 +103,24 @@ and $D$ the number of input dimensions. A hat over a matrix denotes the matrix e
 ones (for the bias terms) appended at the beginning of the matrix. The matrices $X$,$Y$,$R$ and $Z$ are
 the input data, output data, correct result and output of the hidden layer respectively.
 
+\subsection{Data analysis}
+
+%PCA plot analysis
+\subsubsection{Principal components analysis}
+
+%Explain precision/recall
+\subsubsection{Measuring performance}
+
 \section{Results}
+
+The first test was to determine a good number of hidden neurons and iterations that could generalize well
+on a validation set.
+
+%table of errors on training and validation
+
+%table of correct/predicted counts
+
+%precision and recall measures
 
 \section{Conclusions}
 
