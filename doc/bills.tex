@@ -29,7 +29,11 @@ There are several publications on these kinds of systems. %todo: Mention them
 Our approach uses only color information, but the accuracy might be improved by adding features that make use of
 texture information.
 
-\section{The classification system}
+\section{Methodology}
+
+The classification system consist of a feature extraction part, whose responsibility is to compute a vector of
+fixed dimensionality. That feature vector is then feeded to a machine learning algorithm to classify the input
+into one of the corresponding classes.
 
 %feature extraction
 RGB is a color model that expresses the color of each pixel as a vector in a 3-Dimensional space, whose components
