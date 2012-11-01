@@ -1,4 +1,7 @@
 function [a3,Z,a2,a1,z3,z2] = classnn(nn,X)
+	%CLASSNN calculates the output for the multi classification neural network
+	%given by the softmax function.
+
     W = nn.W;
     V = nn.V;
     N = size(X,1);
