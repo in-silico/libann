@@ -35,16 +35,73 @@ The classification system consist of a feature extraction part, whose responsibi
 fixed dimensionality. That feature vector is then feeded to a machine learning algorithm to classify the input
 into one of the corresponding classes.
 
-%feature extraction
-RGB is a color model that expresses the color of each pixel as a vector in a 3-Dimensional space, whose components
-represent the proportion of red, green and blue respectively. This model is widely used for screens, cameras and
-other optical devices but its disadvantage is that it mixes color and brightness.
+\subsection{Feature extraction}
 
-There are other color models such as Yxy from cielab that separate brightness and color in different channels. In
-this system we used Yxy dropping the brightness channel. This decision was taken to generate brightness invariance
-in the feature vectors. %continue the idea
+The features used in this system are only color based features. RGB is a color model that expresses the color of
+each pixel as a vector in a 3-Dimensional space, whose components represent the intensities of red, green and blue
+channels respectively. This model is widely used for screens, cameras and other optical devices but its disadvantage is 
+that it mixes color and brightness information. As the idea is to classify bills regardless of the how bright or 
+dark is the scene, some degree of brightness invariance in the feature vectore is desirable.
 
-%classification systems
+In order to achieve invariance to brightness in the images, a color model created by cielab was used %cite
+named Yxy, where the Y channel carries the brightness information while x and y are the chrominance (color) 
+channels. To transform RGB to Yxy and viceversa a linear transformation, followed by a normalization are
+performed. Brightness invariance is obtained when each pixel in the image is transformed to Yxy and the
+Y channel is dropped, this color model is called xy and from it you can not obtain the original image.
+
+One very used technique to extract color information is to generate color histograms. For each pixel
+the bin were it falls must be determined, and the final output is the count of how many pixels fall
+into each bin. As the color information used is 2-Dimensional (xy model), the ammount of histogram
+bins grow quadratically with the number of division used for each dimension. 
+
+For example, suppose that both x and y vary from 0 to 100. And that the bins intervals are each 5
+units, so you would have 20 division in each dimension. The bins would look like a 20 by 20 matrix
+and the goal is to count how many (x,y) point fall into each slot of the matrix (bin). Note that
+it that case there would be $20^2=400$ different bins.
+
+The problem with that approach is that, as the points do not distrubute uniformly, some bins might
+never be used at all while some other could end up having most of the points. Instead of choosing the
+bins that way, a K-Means algorithm was run over the input points to choose the bins. By doing so
+the centroids would not be placed in regions were there are not any points and hopefully in the
+regions were there are more points more centers would be placed. To determine the bin were each pixel
+falls the closest centroid to that point must be computed using the euclidean distance.
+
+In summary, the feature vectors used for this work were computed as color histograms in the
+xy color model space. And the histogram bins were computed using k-means, where k is the
+ammount of bins desired for the histogram.
+
+%todo: Append images modifying Yxy brightness
+
+\subsection{Classification system}
+
+\subsubsection{Linear classifier}
+
+\subsubsection{Multilayer perceptron}
+The multilayer perceptrons used in this project used a sigmoid function (eq. \ref{eq:sigmoid}) as the
+activation function for the hidden layers and a softmax function (eq. \ref{eq:softmax}) for the output layer
+because the task of classification is for multiple classes.
+
+\begin{align}
+\sigma(x) &= \frac{1}{1+e^{-x}} \label{eq:sigmoid} \\ 
+S_j(\vec{x}) &= \frac{e^{x_j}}{\sum_{i=1}^D{e^{x_i}}} \label{eq:softmax}
+\end{align}
+
+The network was trained using back propagation algorithm to compute the gradients and the complex conjugate
+optimization algorithm was used to find the weights that decrease the network error on the training set on
+each iteration. Let $W_{ij}$ be the weight of the input value $j$ to the hidden neuron $i$, and $V_{ij}$ be
+the weight of the hidden neuron output $j$ to the output neuron $i$. Then the gradients are computed as:
+
+\begin{align}
+\Delta V_{ij} &= \sum_{t=1}^{N}{ \sum_{i=1}^{K}{ \sum_{h=1}^{H+1}{(Y_{ti} - R{ti}) \hat{Z}_{th}} } } \label{eq:gradV} \\ 
+\Delta W_{ij} &= \sum_{t=1}^{N}{ \sum_{h=1}^{H}{ \sum_{j=1}^{D+1}{
+    \left[ Z_{th}(1 - Z_{th})\hat{X}_{tj} \sum_{i=1}^{K}{ (Y_{ti} - R_{ti})V_{i(h+1)} } \right]
+} } } \label{eq:gradW}
+\end{align}
+
+Where $N$ is the number of training instances, $K$ the number of classes, $H$ the number of hidden neurons 
+and $D$ the number of input dimensions. A hat over a matrix denotes the matrix extended with a column of
+ones (for the bias terms) appended at the beginning of the matrix. The matrices $X$,$Y$,$R$ and $Z$ are
+the input data, output data, correct result and output of the hidden layer respectively.
 
 \section{Results}
 
