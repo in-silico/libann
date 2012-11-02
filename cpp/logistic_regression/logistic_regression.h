@@ -26,7 +26,7 @@ namespace LAnn{
             * Creates a neuronal network with D and H neurons on the input and hidden
             * layer respectively and K outputs.
             */
-            NeuronalN(int d,int h, int k){}
+            NeuronalN(int d,int h, int k);
     };
     
     /**
@@ -52,6 +52,11 @@ namespace LAnn{
     void regerrnn(NeuronalN nn, Mat *x, Mat *R, Mat *E);
     
     /**
+    * Computes the error function for clasification, returns in the E matrix.
+    */
+    void classerrnn(NeuronalN nn, Mat *x, Mat *R, Mat *E);
+    
+    /**
     * Computes the y values for given Z in the Neuronal Network.
     */
     void regnn(NeuronalN nn, Mat *x, Mat *y, Mat *z);
@@ -60,8 +65,8 @@ namespace LAnn{
     * Trains the NeuronalNetwork with determinated X and R, compnn and errnn are generic functions.
     */
     
-    void nntrain(NeuronalN nn, Mat *x, Mat *r, int iter, void (compnn *)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
-                 void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E));
+    void nntrain(NeuronalN nn, Mat *x, Mat *r, int iter, void (* compnn )(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
+                 void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E) );
                 
     /**
     * Return the gradient given Y, R, Z homogCoord and V
@@ -80,7 +85,7 @@ namespace LAnn{
     * Implements the neural network cost function for a two layer
     * neural network which performs classification.
     */
-    void nngrad(NeuronalN nn,Mat *wv, Mat *x, Mat *r, void (compnn *)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
+    void nngrad(NeuronalN nn,Mat *wv, Mat *x, Mat *r, void (* compnn)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
                  void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E),Mat * E,Mat *grad);
     
 };
