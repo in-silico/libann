@@ -60,7 +60,7 @@ namespace LAnn{
     * Trains the NeuronalNetwork with determinated X and R, compnn and errnn are generic functions.
     */
     
-    void nntrain(NeuronalN nn, Mat *x, Mat *r, int iter, void (compnn *)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
+    void nntrain(NeuronalN nn, Mat *x, Mat *r, int iter, void (* compnn )(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
                  void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E));
                 
     /**
@@ -80,7 +80,7 @@ namespace LAnn{
     * Implements the neural network cost function for a two layer
     * neural network which performs classification.
     */
-    void nngrad(NeuronalN nn,Mat *wv, Mat *x, Mat *r, void (compnn *)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
+    void nngrad(NeuronalN nn,Mat *wv, Mat *x, Mat *r, void (* compnn )(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
                  void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E),Mat * E,Mat *grad);
     
 };
