@@ -106,10 +106,10 @@ each iteration. Let $W_{ij}$ be the weight of the input value $j$ to the hidden 
 the weight of the hidden neuron output $j$ to the output neuron $i$. Then the gradients are computed as:
 
 \begin{align}
-\Delta V_{ij} &= \sum_{t=1}^{N}{ \sum_{i=1}^{K}{ \sum_{h=1}^{H+1}{(Y_{ti} - R_{ti}) \hat{Z}_{th}} } } \label{eq:gradV} \\ 
-\Delta W_{ij} &= \sum_{t=1}^{N}{ \sum_{h=1}^{H}{ \sum_{j=1}^{D+1}{
+\Delta V_{ih} &= \sum_{t=1}^{N}{(Y_{ti} - R_{ti}) \hat{Z}_{th}} \label{eq:gradV} \\ 
+\Delta W_{hj} &= \sum_{t=1}^{N}{ 
     \left[ Z_{th}(1 - Z_{th})\hat{X}_{tj} \sum_{i=1}^{K}{ (Y_{ti} - R_{ti})V_{i(h+1)} } \right]
-} } } \label{eq:gradW}
+}  \label{eq:gradW}
 \end{align}
 
 Where $N$ is the number of training instances, $K$ the number of classes, $H$ the number of hidden neurons 
@@ -141,13 +141,112 @@ Where k is the dimension of the projection space (in this case 2), and m is the 
 
 The first test was to determine a good number of hidden neurons and iterations that could generalize well
 on a validation set. For this test the training algorithm was run 5 times for each parameter pair of number
-of hidden neurons and number of iterations $<i,h>$ where $i \in \{{600,1000\}$
+of hidden neurons and number of iterations $<i,h>$ where $i \in \{600,1000\}$ and $h \in \{12,14,16,18,20,25\}$.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+* & 12 & 14 & 16 & 18 & 20 & 25 \\
+600 & 527.78 & 421.02 & 491.96 & 493.66 & 466.69 & 445.39 \\
+1000 & 375.13 & 339.84 & 312.49 & 306.66 & 283.72 & 278.08 \\ 
+\hline
+\end{tabular}
+\caption{Error on the training set for different models}
+\label{tb:terror}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+* & 12 & 14 & 16 & 18 & 20 & 25 \\
+600 & 96.632 & 82.728 & 88.285 & 90.674 & 84.103 & 94.190 \\
+1000 & 79.651 & 75.369 & 74.904 & 74.693 & 70.771 & 76.531 \\ 
+\hline
+\end{tabular}
+\caption{Error on the validation set for different models}
+\label{tb:verror}
+\end{table}
+
+The reason for running the algorithm with the same ammount of hidden neurons and iterations several times is
+that as the initial weights are initialized at random, every time different results can be obtained. Thus,
+by running the algorithm several times the effect of randomness in the error is reduced. The table
+\ref{tb:terror} shows the minimum error of each of the models on the training set computed with equation \ref{eq:crossee}.
+The table \ref{tb:verror} shows the same as table \ref{tb:terror} but for the validation set.
 
 %table of errors on training and validation
 
-%table of correct/predicted counts
+The confusion matrix explained in section \ref{sub:measures} was computed for the best model over the validation
+set, namely, with 1000 iteration and 20 hidden neurons. The confusion matrix over the training set is shown on table
+\ref{tb:tconfm} and table \ref{tb:vconfm} for the validation set.
 
-%precision and recall measures
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+* & 1000 & 2000 & 5000 & 10000 & 20000 & 50000 \\
+\hline
+1000 &  109 & 2 & 5 & 8 & 1 & 5 \\
+2000 & 5 & 100 & 2 & 3 & 0 & 0 \\
+5000 & 1 & 5 & 146 & 2 &  15 & 6 \\
+10000 & 3 & 3 & 1 &  92 & 0 & 1 \\
+20000 & 1 & 1 &  12 & 0 & 143 & 3 \\
+50000 & 1 & 1 & 6 & 0 & 0 & 125 \\
+\hline
+\end{tabular}
+\caption{Confusion matrix for the chosen model over the training set}
+\label{tb:tconfm}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+* & 1000 & 2000 & 5000 & 10000 & 20000 & 50000 \\
+\hline
+1000 &  9 &  0 &  0 &  2 &  0 &  0 \\
+2000 &  1 & 12 &  0 &  0 &  0 &  1 \\
+5000 &  1 &  0 & 15 &  0 &  2 &  0 \\
+10000 &  2 &  0 &  0 &  9 &  1 &  2 \\
+20000 &  0 &  0 &  4 &  0 & 14 &  2 \\
+50000 &  0 &  0 &  0 &  0 &  0 & 11 \\
+\hline
+\end{tabular}
+\caption{Confusion matrix for the chosen model over the validation set}
+\label{tb:vconfm}
+\end{table}
+
+The total error on the training and validation set are 11.41\% and 20.11\% respectively. The confusion matrix
+does not show a strong pattern of confusion between any two classes that requires additional attention.
+The precision, recall and f1-score are shown on table \ref{tb:tscores} and \ref{tb:vscores} respectively
+for the training and validation sets.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Presicion: &  0.83846 & 0.90909 & 0.83429 & 0.92000 & 0.89375 & 0.93985 \\
+Recall: &  0.90833 & 0.89286 & 0.84884 & 0.87619 & 0.89937 & 0.89286 \\
+F1Score: & 0.87200 & 0.90090 & 0.84150 & 0.89756 & 0.89655 & 0.91575  \\
+\hline
+\end{tabular}
+\caption{Precision, recall and F1Score on the training set}
+\label{tb:tscores}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Presicion:& 0.81818 & 0.85714 & 0.83333 & 0.64286 & 0.70000 & 1.00000 \\
+Recall: & 0.69231 & 1.00000 & 0.78947 & 0.81818 & 0.82353 & 0.68750 \\
+F1Score:  & 0.75000 & 0.92308 & 0.81081 & 0.72000 & 0.75676 & 0.81481  \\
+\hline
+\end{tabular}
+\caption{Precision, recall and F1Score on the validation set}
+\label{tb:vscores}
+\end{table}
 
 \section{Conclusions}
 
