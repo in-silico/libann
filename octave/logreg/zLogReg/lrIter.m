@@ -11,12 +11,12 @@ function [terr, verr, W] = lrIter(X, R, Xv, Rv, K, lambda)
 	W = W(:);
 
 	%Set options for fminunc
-	options = optimset('GradObj', 'on', 'MaxIter', 500);
+	options = optimset('GradObj', 'on', 'MaxIter', 400);
 	
 	%Test of costFunctionReg [for debug]
 	%[tJ, tgrad] = costFunctionReg(W, X, R, K, lambda);
     %grad2 = computeNumericalGradient(@(ww)(costFunctionReg(ww,X,R,K, lambda)),W);
-	%grad2-tgrad
+	%find(grad2-tgrad > 1e-5)
 
 	%  Run fminunc to obtain the optimal weights
 	[W, J] = fmincg(@(ww)(costFunctionReg(ww, X, R, K, lambda)), W, options);

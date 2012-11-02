@@ -23,8 +23,8 @@ end
 
 %Dimensionality reduction for 2D plotting
 %S = plotPCA(X, t1, 2);
-lambda = 0.1;
-for p=1:4
+lambda = 0;
+for p=1:5
 
 	%Create the phi matrix transforming the initial X values into poly features
 	XtPoly = mapFPoly(X,p);
