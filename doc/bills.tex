@@ -145,6 +145,7 @@ This allows an identification of the possible misslabelings that the system migh
 the computation of three important values:
 
 \begin{table}
+\centering
 \begin{tabular}{|c | c | c| c| c|}
 \hline
 ° &  $K_{1}$ &  $K_{2}$  & ... & $K_{k}$ \\
@@ -163,23 +164,80 @@ the computation of three important values:
 \end{table}
  
 \paragraph{Precision:}  
-Of all the predicted classes, how many are correctly classified (eq. \ref{eq:precision}).
+Of all the predicted classes, how many are correctly classified 
 \begin{align}
 P_k &= \frac{True Positives}{True Positives + \sum_{i \ne k}{Misses K_{k,i}}} \label{eq:precision} 
 \end{align}
 \paragraph{Recall:} 
-Of each of the classes, how many are correctly detected as such (eq \ref{eq:recall}).
+Of each of the classes, how many are correctly detected as such 
 \begin{align}
 R_k &= \frac{True Positives}{True Positives + \sum_{i \ne k}{Misses K_{i,k}}} \label{eq:recall}
 \end{align}
 \paragraph{F1Score:} 
-Is a measure that combines both the Precision and Recall into a single value indicating an overall performance for a class $k$ (\ref{eq:f1score}).
+Is a measure that combines both the Precision and Recall into a single value indicating an overall performance for a class $k$ 
 \begin{align}
 F1Score_k &= 2 * \frac{P_k*R_k}{P_k+R_k} \label{eq:f1score}
 \end{align}
 
 
 \section{Results}
+The first execution of the linear classifier with the raw input vector $\vec{x}$ gave a trainig error of 49.57\%
+and a validation error of 52.3\%. Since this results show that the data doesn't seem to be linearly separable, 
+the feature vector $\vec(x)$ was transformed into a new vector $\phi$ containing the polynomial features of 
+order $i \in \{2,3\}$, and then, the linear classifier was run again. The best results were obtained with the
+$3^{rd}$ degree polynom were the training and validation error were 29.59\% and 31.61\%  respectively. 
+Tables \ref{tb:tconfmlr}, \ref{tb:vconfmlr} and \ref{tb:tscoreslr} show such results.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+* & 1000 & 2000 & 5000 & 10000 & 20000 & 50000 \\
+\hline
+1000 &  87 &   6 &   2 &   9 &   0 &  14 \\
+2000 &  10 &  90 &   5 &   4 &   1 &   4 \\
+5000 &   1 &   3 & 105 &   2 &  42 &  20 \\
+10000 &   6 &   7 &   4 &  85 &   0 &   4 \\
+20000 &   5 &   3 &  34 &   0 & 113 &   7 \\
+50000 &  12 &   6 &  22 &   5 &   5 &  92 \\
+\hline
+\end{tabular}
+\caption{Confusion matrix for the $3^{rd}$ degree polynom over the training set}
+\label{tb:tconfmlr}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+* & 1000 & 2000 & 5000 & 10000 & 20000 & 50000 \\
+\hline
+1000 &  11 &  2 &  1 &  0 &  0 &  1 \\
+2000 &  0 &  9 &  1 &  1 &  0 &  2 \\
+5000 &  1 &  1 & 12 &  0 &  9 &  1 \\
+10000 &  1 &  0 &  0 & 10 &  0 &  0 \\
+20000 &  0 &  0 &  5 &  0 &  8 &  2 \\
+50000 &  0 &  0 &  0 &  0 &  0 & 10 \\
+\hline
+\end{tabular}
+\caption{Confusion matrix for the $3^{rd}$ degree polynom over the validation set}
+\label{tb:vconfmlr}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Precision: & 0.73333 & 0.69231 & 0.50000 & 0.90909 & 0.53333 & 1.00000 \\
+Recall: &  0.84615 & 0.75000 & 0.63158 & 0.90909 & 0.47059 & 0.62500 \\
+F1Score: & 0.78571 & 0.72000 & 0.55814 & 0.90909 & 0.50000 & 0.76923 \\
+\hline
+\end{tabular}
+\caption{Precision, recall and F1Score on the validation set for the $3^{rd}$ degree polynom}
+\label{tb:tscoreslr}
+\end{table}
+
+
 
 The first test was to determine a good number of hidden neurons and iterations that could generalize well
 on a validation set. For this test the training algorithm was run 5 times for each parameter pair of number
