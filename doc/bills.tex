@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{IEEEtran}
 
 \usepackage{mathtools}
 \usepackage{graphicx}
@@ -11,28 +11,34 @@
 \begin{document}
 
 \title{Paper currency recognition with color histograms}
+\date {November of 2012}
 \author{Sebastian Gomez \\ Tatiana Lopez}
 \maketitle
 
 \begin{abstract}
 This document shows an approach to make a color histogram based classification of paper currency from an image.
+First, it exposes how the features were extracted from the images and how to classify once those features
+are extracted. Finally, it explains how the results were obtained and shows the analysis of the results.
 %todo:Terminar abstract
 \end{abstract}
 
 \section{Introduction}
-For blind people in many countries it is hard to recognize the denomination of their local paper currency because
+\IEEEPARstart{F}{or} blind people in many countries it is hard to recognize the denomination of their local paper currency because
 there are not enough non optic features in the bills. It would be useful for them to have automated software that
 can recognize the currency denomination from an image.
 
-There are several publications on these kinds of systems. %todo: Mention them
+%There are several publications on these kinds of systems. %todo: Mention them
 
 Our approach uses only color information, but the accuracy might be improved by adding features that make use of
-texture information.
+texture information. This document explains the methodology used to extract the features, to make the classification
+of the paper currency and to analyze the results. The goal is to classify the Colombian paper currencies based only
+on color features, the denominations of the Colombian currency are \$1000, \$2000, \$5000, \$10000, \$20000 and
+\$50000.
 
 \section{Methodology}
 
 The classification system consist of a feature extraction part, whose responsibility is to compute a vector of
-fixed dimensionality. That feature vector is then feeded to a machine learning algorithm to classify the input
+fixed dimensionality. That feature vector is then given to a machine learning algorithm to classify the input
 into one of the corresponding classes.
 
 \subsection{Feature extraction}
@@ -41,7 +47,7 @@ The features used in this system are only color based features. RGB is a color m
 each pixel as a vector in a 3-Dimensional space, whose components represent the intensities of red, green and blue
 channels respectively. This model is widely used for screens, cameras and other optical devices but its disadvantage is 
 that it mixes color and brightness information. As the idea is to classify bills regardless of the how bright or 
-dark is the scene, some degree of brightness invariance in the feature vectore is desirable.
+dark is the scene, some degree of brightness invariance in the feature vector is desirable.
 
 In order to achieve invariance to brightness in the images, a color model created by cielab was used %cite
 named Yxy, where the Y channel carries the brightness information while x and y are the chrominance (color) 
@@ -51,7 +57,7 @@ Y channel is dropped, this color model is called xy and from it you can not obta
 
 One very used technique to extract color information is to generate color histograms. For each pixel
 the bin were it falls must be determined, and the final output is the count of how many pixels fall
-into each bin. As the color information used is 2-Dimensional (xy model), the ammount of histogram
+into each bin. As the color information used is 2-Dimensional (xy model), the amount of histogram
 bins grow quadratically with the number of division used for each dimension. 
 
 For example, suppose that both x and y vary from 0 to 100. And that the bins intervals are each 5
@@ -59,7 +65,7 @@ units, so you would have 20 division in each dimension. The bins would look like
 and the goal is to count how many (x,y) point fall into each slot of the matrix (bin). Note that
 it that case there would be $20^2=400$ different bins.
 
-The problem with that approach is that, as the points do not distrubute uniformly, some bins might
+The problem with that approach is that, as the points do not distribute uniformly, some bins might
 never be used at all while some other could end up having most of the points. Instead of choosing the
 bins that way, a K-Means algorithm was run over the input points to choose the bins. By doing so
 the centroids would not be placed in regions were there are not any points and hopefully in the
@@ -68,7 +74,7 @@ falls the closest centroid to that point must be computed using the euclidean di
 
 In summary, the feature vectors used for this work were computed as color histograms in the
 xy color model space. And the histogram bins were computed using k-means, where k is the
-ammount of bins desired for the histogram.
+amount of bins desired for the histogram.
 
 %todo: Append images modifying Yxy brightness
 
@@ -125,7 +131,7 @@ In order to visualize the data in 2D, the PCA dimensionality reduction algorithm
 The goal of this algorithm is to find a lower dimensional space into which project the data, minimizing
 the average orthogonal distances of the feature vector $\vec{x}$ into the projection space. First, the data
 was normalized, and the covariance matrix $\Sigma$ was found. Then, this covariance matrix was used to find the
-first two eigenvectors onto wich project the data. The percentage of variace retained by the projection 
+first two eigenvectors onto which project the data. The percentage of variance retained by the projection 
 (eq. \ref{eq:svderr}) was calculated with the matrix $S$ given by the octave $[U,S,V] = svd(\Sigma)$ function as:
 
 \begin{align}
@@ -141,7 +147,7 @@ As a way to analyze the performance of the implemented classification systems fo
 a confusion matrix was implemented. 
 This table summarizes for each class, the number of hits and the detailed number of misses, specifying 
 the number of confusions with each of the other classes (Table \ref{tb:tbError}).
-This allows an identification of the possible misslabelings that the system might be incurring into and
+This allows an identification of the possible mislabeling that the system might be incurring into and
 the computation of three important values:
 
 \begin{table}
@@ -269,7 +275,7 @@ of hidden neurons and number of iterations $<i,h>$ where $i \in \{600,1000\}$ an
 \label{tb:verror}
 \end{table}
 
-The reason for running the algorithm with the same ammount of hidden neurons and iterations several times is
+The reason for running the algorithm with the same amount of hidden neurons and iterations several times is
 that as the initial weights are initialized at random, every time different results can be obtained. Thus,
 by running the algorithm several times the effect of randomness in the error is reduced. The table
 \ref{tb:terror} shows the minimum error of each of the models on the training set computed with equation \ref{eq:crossee}.
@@ -326,7 +332,7 @@ for the training and validation sets.
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
-Presicion: &  0.83846 & 0.90909 & 0.83429 & 0.92000 & 0.89375 & 0.93985 \\
+Precision: &  0.83846 & 0.90909 & 0.83429 & 0.92000 & 0.89375 & 0.93985 \\
 Recall: &  0.90833 & 0.89286 & 0.84884 & 0.87619 & 0.89937 & 0.89286 \\
 F1Score: & 0.87200 & 0.90090 & 0.84150 & 0.89756 & 0.89655 & 0.91575  \\
 \hline
@@ -339,7 +345,7 @@ F1Score: & 0.87200 & 0.90090 & 0.84150 & 0.89756 & 0.89655 & 0.91575  \\
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
-Presicion:& 0.81818 & 0.85714 & 0.83333 & 0.64286 & 0.70000 & 1.00000 \\
+Precision:& 0.81818 & 0.85714 & 0.83333 & 0.64286 & 0.70000 & 1.00000 \\
 Recall: & 0.69231 & 1.00000 & 0.78947 & 0.81818 & 0.82353 & 0.68750 \\
 F1Score:  & 0.75000 & 0.92308 & 0.81081 & 0.72000 & 0.75676 & 0.81481  \\
 \hline
@@ -348,6 +354,27 @@ F1Score:  & 0.75000 & 0.92308 & 0.81081 & 0.72000 & 0.75676 & 0.81481  \\
 \label{tb:vscores}
 \end{table}
 
+\begin{figure}[h!]
+\caption{Two principal components of PCA}
+\centering
+\includegraphics[width=6cm]{pca.png}
+\label{fig:pca}
+\end{figure}
+
 \section{Conclusions}
+
+This paper shows an approach to build a paper currency classifier, and shows the results for different
+classification algorithms.
+
+The data shows that the features are not linearly separable. The evidence that supports this argument is the
+difference in the accuracy of the linear classifier against the multilayer perceptron. If the features were
+linearly separable a higher accuracy would be expected on the linear classifier. The principal component
+analysis algorithm \ref{fig:pca} also shows that data points of different classes are close in the same
+regions of the space, but as the first 2 principal components only explain a 53.93\% of the variance, this
+plot is not a strong argument to support this conclusion.
+
+The final accuracy of the neural network was about 79\% while the accuracy of random system for the same problem would
+be 16.6\%. To improve further this system, more data of a change in the feature vector could be a good idea. A
+feature vector that would not discard the texture information could produce a better classifier.
 
 \end{document}
