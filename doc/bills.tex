@@ -90,7 +90,7 @@ E(\vec{w}) &= -\sum_{n=1}^{N}{\sum_{k=1}^{K}{\vec{t}_{n,k} \ln \vec{y}_{k}(\vec{
 \nabla E(\vec{w}) &=  \sum_{n=1}^{N}{(\vec{y}_{n} - \vec{t}_{n})*\vec{x}_{n}} \label{eq:gradSoftMax}
 \end{align}
 
-Where $N$ corresponds to the number of training sets, $\vec{x}$ is the feature vector, $K$ is the number of classes
+Where $N$ corresponds to the number of training instances, $\vec{x}$ is the feature vector, $K$ is the number of classes
 and $\vec{w}$ is the weight matrix composed of $N$ rows and $K$ columns, giving K discriminant functions one for
 each class. The known output of the training set $\vec{t}$ is also a matrix of $N * K$ dimensions, where for each row, 
 there is only a value of 1 at a column k, indicating that such training row belongs to class k.
@@ -141,6 +141,48 @@ Where k is the dimension of the projection space (in this case 2), and m is the 
 
 %Explain precision/recall
 \subsubsection{Measuring performance}
+\label{sub:measures}
+As a way to analyze the performance of the implemented classification systems for each of the classes, 
+a confusion matrix was implemented. 
+This table summarizes for each class, the number of hits and the detailed number of misses, specifying 
+the number of confusions with each of the other classes (Table \ref{tb:tbError}).
+This allows an identification of the possible misslabelings that the system might be incurring into and
+the computation of three important values:
+
+\begin{table}
+\begin{tabular}{|c | c | c| c| c|}
+\hline
+° &  $K_{1}$ &  $K_{2}$  & ... & $K_{k}$ \\
+\hline
+ $K_{1}$  & \#True Positives & \#Misses $K_{1,2}$ & ... & \#Misses $K_{1,k}$  \\
+\hline
+ $K_{2}$  & \#Misses $K_{2,1}$ & \#True Positives &  ... & \#Misses $K_{2,k}$  \\
+\hline
+... & ... & ... & ... & ... \\
+\hline
+ $K_{k}$  & \#Misses $K_{k,1}$ & \#Misses $K_{k,2}$ & ... & \#True Positives   \\
+\hline
+\end{tabular}
+\caption{Error Table}
+\label{tb:tbError}
+\end{table}
+ 
+\paragraph{Precision:}  
+Of all the predicted classes, how many are correctly classified (eq. \ref{eq:precision}).
+\begin{align}
+P_k &= \frac{True Positives}{True Positives + \sum_{i \ne k}{Misses K_{k,i}}} \label{eq:precision} 
+\end{align}
+\paragraph{Recall:} 
+Of each of the classes, how many are correctly detected as such (eq \ref{eq:recall}).
+\begin{align}
+R_k &= \frac{True Positives}{True Positives + \sum_{i \ne k}{Misses K_{i,k}}} \label{eq:recall}
+\end{align}
+\paragraph{F1Score:} 
+Is a measure that combines both the Precision and Recall into a single value indicating an overall performance for a class $k$ (\ref{eq:f1score}).
+\begin{align}
+F1Score_k &= 2 * \frac{P_k*R_k}{P_k+R_k} \label{eq:f1score}
+\end{align}
+
 
 \section{Results}
 
