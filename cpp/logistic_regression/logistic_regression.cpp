@@ -26,15 +26,28 @@ namespace LAnn{
             }
         }
     }
+
     
     void sigmoid(Mat *z, Mat *g){
-
+        for(int i=0 ; i<z->nrows() ; i++){
+            for( int j=0 ; j< z->ncols() ; j++){
+                g->get(i,j) = 1/(1 + exp(-1 * z->get(i,j)));
+            }
+        }
 
     }
 
     void sigmoidGradient(Mat *z,Mat *g){
-
-
+        double tmp=0;
+        sigmoid(z,g);
+        
+        for (int i =0; i < g->nrows(); ++i){
+            for(int j=0; j < g->ncols(); ++j){
+                double tmp= g->get(i,j);
+                g->get(i,j)= tmp*(1-tmp);
+            }
+        }
+                
     }
 
     void regerrnn(NeuronalN nn, Mat *x, Mat *R, Mat *E){
@@ -50,6 +63,7 @@ namespace LAnn{
     void regnn(NeuronalN nn, Mat *x, Mat *y, Mat *z){
 
     }
+
 
     void nntrain(NeuronalN nn, Mat *x, Mat *r, int iter, void (* compnn)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
                      void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E)){
