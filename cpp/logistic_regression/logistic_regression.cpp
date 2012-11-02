@@ -2,6 +2,8 @@
 
 
 namespace LAnn{
+    
+    
     void sigmoid(Mat *z, Mat *g){
         for(int i=0 ; i<z.nrows() ; i++){
             rep( j=0 ; j<z.ncols() ; j++){
@@ -12,8 +14,16 @@ namespace LAnn{
     }
 
     void sigmoidGradient(Mat *z,Mat *g){
-
-
+        double tmp=0;
+        sigmoid(z, g);
+        
+        rep (i, g.nrows()){
+            rep (j, g.ncols()){
+                double tmp= g.get(i,j);
+                g.get(i,j)= tmp*(1-tmp);
+                }
+           }
+                
     }
 
     void regerrnn(NeuronalN nn, Mat *x, Mat *R, Mat *E){
