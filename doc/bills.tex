@@ -16,6 +16,8 @@
 
 \begin{abstract}
 This document shows an approach to make a color histogram based classification of paper currency from an image.
+First, it exposes how the features were extracted from the images and how to classify once those features
+are extracted. Finally, it explains how the results were obtained and shows the analysis of the results.
 %todo:Terminar abstract
 \end{abstract}
 
@@ -24,10 +26,13 @@ For blind people in many countries it is hard to recognize the denomination of t
 there are not enough non optic features in the bills. It would be useful for them to have automated software that
 can recognize the currency denomination from an image.
 
-There are several publications on these kinds of systems. %todo: Mention them
+%There are several publications on these kinds of systems. %todo: Mention them
 
 Our approach uses only color information, but the accuracy might be improved by adding features that make use of
-texture information.
+texture information. This document explains the methodology used to extract the features, to make the classification
+of the paper currency and to analyze the results. The goal is to classify the colombian paper currencies based only
+on color features, the denominations of the colombian currency are \$1000, \$2000, \$5000, \$10000, \$20000 and
+\$50000.
 
 \section{Methodology}
 
