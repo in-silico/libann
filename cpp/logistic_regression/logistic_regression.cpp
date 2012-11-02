@@ -3,7 +3,11 @@
 
 namespace LAnn{
     void sigmoid(Mat *z, Mat *g){
-
+        for(int i=0 ; i<z.nrows() ; i++){
+            rep( j=0 ; j<z.ncols() ; j++){
+                g.get(i,j) = 1/(1 + exp(-1 * z.get(i,j)));
+            }
+        }
 
     }
 
@@ -26,7 +30,7 @@ namespace LAnn{
 
     }
 
-    void nntrain(NeuronalN nn, Mat *x, Mat *r, int iter, void (compnn *)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
+    void nntrain(NeuronalN nn, Mat *x, Mat *r, int iter, void (* compnn )(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
                      void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E)){
                      
                      
@@ -41,7 +45,7 @@ namespace LAnn{
 
     }
 
-    void nngrad(NeuronalN nn,Mat *wv, Mat *x, Mat *r, void (compnn *)(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
+    void nngrad(NeuronalN nn,Mat *wv, Mat *x, Mat *r, void (* compnn )(NeuronalN nn, Mat *x, Mat *y, Mat *z), \
                      void (* errnn)(NeuronalN nn,Mat *x, Mat *R, Mat *E),Mat * E,Mat *grad){
                      
                      
