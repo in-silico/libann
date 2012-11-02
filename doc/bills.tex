@@ -75,6 +75,20 @@ ammount of bins desired for the histogram.
 \subsection{Classification system}
 
 \subsubsection{Linear classifier}
+The optimization algorithm used to find the weights $\vec{w}$ that minimized the classification error on the training 
+set was conjugate gradient.
+Since this work is focused in a multiclass classification problem, the functions employed to calculate the output $\vec{y}$, the error $E$
+and derivatives of such error with respect to the weights $\nabla E$ were the softmax function (eq. \ref{eq:softmax}), 
+the cross-entropy error function (eq. \ref{eq:crossee}), and the error gradient (eq. \ref{eq:gradSoftMax}) respectively.
+\begin{align}
+E(\vec{w}) &= -\sum_{n=1}^{N}{\sum_{k=1}^{K}{\vec{t}_{n,k} \ln \vec{y}_{k}(\vec{w},\vec{x_{n}})}} \label{eq:crossee} \\
+\nabla E(\vec{w}) &=  \sum_{n=1}^{N}{(\vec{y}_{n} - \vec{t}_{n})*\vec{x}_{n}} \label{eq:gradSoftMax}
+\end{align}
+
+Where $N$ corresponds to the number of training sets, $\vec{x}$ is the feature vector, $K$ is the number of classes
+and $\vec{w}$ is the weight matrix composed of $N$ rows and $K$ columns, giving K discriminant functions one for
+each class. The known output of the training set $\vec{t}$ is also a matrix of $N * K$ dimensions, where for each row, 
+there is only a value of 1 at a column k, indicating that such training row belongs to class k.
 
 \subsubsection{Multilayer perceptron}
 The multilayer perceptrons used in this project used a sigmoid function (eq. \ref{eq:sigmoid}) as the
@@ -107,6 +121,18 @@ the input data, output data, correct result and output of the hidden layer respe
 
 %PCA plot analysis
 \subsubsection{Principal components analysis}
+In order to visualize the data in 2D, the PCA dimensionality reduction algorithm was performed.
+The goal of this algorithm is to find a lower dimensional space into which project the data, minimizing
+the average orthogonal distances of the feature vector $\vec{x}$ into the projection space. First, the data
+was normalized, and the covariance matrix $\Sigma$ was found. Then, this covariance matrix was used to find the
+first two eigenvectors onto wich project the data. The percentage of variace retained by the projection 
+(eq. \ref{eq:svderr}) was calculated with the matrix $S$ given by the octave $[U,S,V] = svd(\Sigma)$ function as:
+
+\begin{align}
+\frac{\sum_{i=1}^{k}S_{ii}}{\sum_{i=1}^{m}S_{ii}} \label{eq:svderr}
+\end{align}
+
+Where k is the dimension of the projection space (in this case 2), and m is the dimension of the original space.
 
 %Explain precision/recall
 \subsubsection{Measuring performance}
