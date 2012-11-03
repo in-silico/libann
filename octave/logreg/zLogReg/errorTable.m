@@ -26,7 +26,7 @@ function Et = errorTable(Y, R, K)
 
 	
 	disp(Et);
-	printf('Presicion: ');
+	printf('Precicion: ');
 	disp(precision);
 	printf('Recall:    ');
 	disp(recall);

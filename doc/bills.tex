@@ -10,10 +10,16 @@
 
 \begin{document}
 
-\title{Paper currency recognition with color histograms}
+\title{Paper Currency Recognition with Color Histograms}
 \date {November of 2012}
-\author{Sebastian Gomez \\ Tatiana Lopez}
+%\author{Sebastian Gomez \\ Tatiana Lopez}
+\author{\IEEEauthorblockN{Sebastian Gomez, Tatiana Lopez Guevara \\}
+\IEEEauthorblockA{School of Computer Engineering\\
+Universidad Tecnologica de Pereira\\
+Pereira, Colombia\\
+Email: sebasutp@gmail.com, tatiana.lopez@sirius.utp.edu.co }}
 \maketitle
+
 
 \begin{abstract}
 This document shows an approach to make a color histogram based classification of paper currency from an image.
@@ -21,6 +27,10 @@ First, it exposes how the features were extracted from the images and how to cla
 are extracted. Finally, it explains how the results were obtained and shows the analysis of the results.
 %todo:Terminar abstract
 \end{abstract}
+
+\begin{IEEEkeywords}
+Artificial neural networks, classification algorithms, machine learning.
+\end{IEEEkeywords}
 
 \section{Introduction}
 \IEEEPARstart{F}{or} blind people in many countries it is hard to recognize the denomination of their local paper currency because
@@ -341,7 +351,7 @@ F1Score: & 0.87200 & 0.90090 & 0.84150 & 0.89756 & 0.89655 & 0.91575  \\
 \label{tb:tscores}
 \end{table}
 
-\begin{table}
+\begin{table}[h]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
@@ -354,7 +364,7 @@ F1Score:  & 0.75000 & 0.92308 & 0.81081 & 0.72000 & 0.75676 & 0.81481  \\
 \label{tb:vscores}
 \end{table}
 
-\begin{figure}[h!]
+\begin{figure}[h]
 \caption{Two principal components of PCA}
 \centering
 \includegraphics[width=6cm]{pca.png}
