@@ -23,7 +23,7 @@ Email: sebasutp@gmail.com, tatiana.lopez@sirius.utp.edu.co }}
 
 \begin{abstract}
 This document shows an approach to make a color histogram based classification of paper currency from an image.
-First, it exposes how the features were extracted from the images and how to classify once those features
+First, it exposes how the features were extracted from the images and how to classify them once those features
 are extracted. Finally, it explains how the results were obtained and shows the analysis of the results.
 %todo:Terminar abstract
 \end{abstract}
@@ -34,7 +34,7 @@ Artificial neural networks, classification algorithms, machine learning.
 
 \section{Introduction}
 \IEEEPARstart{F}{or} blind people in many countries it is hard to recognize the denomination of their local paper currency because
-there are not enough non optic features in the bills. It would be useful for them to have automated software that
+there are not enough non optical features in the bills. It would be useful for them to have an automated software that
 can recognize the currency denomination from an image.
 
 %There are several publications on these kinds of systems. %todo: Mention them
@@ -72,7 +72,7 @@ bins grow quadratically with the number of division used for each dimension.
 
 For example, suppose that both x and y vary from 0 to 100. And that the bins intervals are each 5
 units, so you would have 20 division in each dimension. The bins would look like a 20 by 20 matrix
-and the goal is to count how many (x,y) point fall into each slot of the matrix (bin). Note that
+and the goal is to count how many (x,y) points fall into each slot of the matrix (bin). Note that
 it that case there would be $20^2=400$ different bins.
 
 The problem with that approach is that, as the points do not distribute uniformly, some bins might
@@ -118,8 +118,8 @@ S_j(\vec{x}) &= \frac{e^{x_j}}{\sum_{i=1}^D{e^{x_i}}} \label{eq:softmax}
 
 The network was trained using back propagation algorithm to compute the gradients and the complex conjugate
 optimization algorithm was used to find the weights that decrease the network error on the training set on
-each iteration. Let $W_{ij}$ be the weight of the input value $j$ to the hidden neuron $i$, and $V_{ij}$ be
-the weight of the hidden neuron output $j$ to the output neuron $i$. Then the gradients are computed as:
+each iteration. Let $W_{hj}$ be the weight of the input value $j$ to the hidden neuron $h$, and $V_{ih}$ be
+the weight of the hidden neuron output $h$ to the output neuron $i$. Then the gradients are computed as:
 
 \begin{align}
 \Delta V_{ih} &= \sum_{t=1}^{N}{(Y_{ti} - R_{ti}) \hat{Z}_{th}} \label{eq:gradV} \\ 
@@ -137,7 +137,7 @@ the input data, output data, correct result and output of the hidden layer respe
 
 %PCA plot analysis
 \subsubsection{Principal components analysis}
-In order to visualize the data in 2D, the PCA dimensionality reduction algorithm was performed.
+In order to visualize the data in 2D, the PCA dimensionality reduction algorithm was run.
 The goal of this algorithm is to find a lower dimensional space into which project the data, minimizing
 the average orthogonal distances of the feature vector $\vec{x}$ into the projection space. First, the data
 was normalized, and the covariance matrix $\Sigma$ was found. Then, this covariance matrix was used to find the
@@ -179,17 +179,17 @@ the computation of three important values:
 \label{tb:tbError}
 \end{table}
  
-\paragraph{Precision:}  
+\paragraph{Precision}  
 Of all the predicted classes, how many are correctly classified 
 \begin{align}
 P_k &= \frac{True Positives}{True Positives + \sum_{i \ne k}{Misses K_{k,i}}} \label{eq:precision} 
 \end{align}
-\paragraph{Recall:} 
+\paragraph{Recall} 
 Of each of the classes, how many are correctly detected as such 
 \begin{align}
 R_k &= \frac{True Positives}{True Positives + \sum_{i \ne k}{Misses K_{i,k}}} \label{eq:recall}
 \end{align}
-\paragraph{F1Score:} 
+\paragraph{F1Score} 
 Is a measure that combines both the Precision and Recall into a single value indicating an overall performance for a class $k$ 
 \begin{align}
 F1Score_k &= 2 * \frac{P_k*R_k}{P_k+R_k} \label{eq:f1score}
@@ -197,11 +197,11 @@ F1Score_k &= 2 * \frac{P_k*R_k}{P_k+R_k} \label{eq:f1score}
 
 
 \section{Results}
-The first execution of the linear classifier with the raw input vector $\vec{x}$ gave a trainig error of 49.57\%
+The first execution of the linear classifier with the raw input vector $\vec{x}$ gave a training error of 49.57\%
 and a validation error of 52.3\%. Since this results show that the data doesn't seem to be linearly separable, 
-the feature vector $\vec(x)$ was transformed into a new vector $\phi$ containing the polynomial features of 
+the feature vector $\vec{x}$ was transformed into a new vector $\vec{\phi}$ containing the polynomial features of 
 order $i \in \{2,3\}$, and then, the linear classifier was run again. The best results were obtained with the
-$3^{rd}$ degree polynom were the training and validation error were 29.59\% and 31.61\%  respectively. 
+$3^{rd}$ degree polynomial were the training and validation error were 29.59\% and 31.61\%  respectively. 
 Tables \ref{tb:tconfmlr}, \ref{tb:vconfmlr} and \ref{tb:tscoreslr} show such results.
 
 \begin{table}
@@ -218,7 +218,7 @@ Tables \ref{tb:tconfmlr}, \ref{tb:vconfmlr} and \ref{tb:tscoreslr} show such res
 50000 &  12 &   6 &  22 &   5 &   5 &  92 \\
 \hline
 \end{tabular}
-\caption{Confusion matrix for the $3^{rd}$ degree polynom over the training set}
+\caption{Confusion matrix for the $3^{rd}$ degree plenum over the training set}
 \label{tb:tconfmlr}
 \end{table}
 
@@ -236,7 +236,7 @@ Tables \ref{tb:tconfmlr}, \ref{tb:vconfmlr} and \ref{tb:tscoreslr} show such res
 50000 &  0 &  0 &  0 &  0 &  0 & 10 \\
 \hline
 \end{tabular}
-\caption{Confusion matrix for the $3^{rd}$ degree polynom over the validation set}
+\caption{Confusion matrix for the $3^{rd}$ degree polonium over the validation set}
 \label{tb:vconfmlr}
 \end{table}
 
@@ -249,13 +249,13 @@ Recall: &  0.84615 & 0.75000 & 0.63158 & 0.90909 & 0.47059 & 0.62500 \\
 F1Score: & 0.78571 & 0.72000 & 0.55814 & 0.90909 & 0.50000 & 0.76923 \\
 \hline
 \end{tabular}
-\caption{Precision, recall and F1Score on the validation set for the $3^{rd}$ degree polynom}
+\caption{Precision, recall and F1Score on the validation set for the $3^{rd}$ degree polonium}
 \label{tb:tscoreslr}
 \end{table}
 
 
 
-The first test was to determine a good number of hidden neurons and iterations that could generalize well
+The first test on the neural network was to determine a good number of hidden units and iterations that could generalize well
 on a validation set. For this test the training algorithm was run 5 times for each parameter pair of number
 of hidden neurons and number of iterations $<i,h>$ where $i \in \{600,1000\}$ and $h \in \{12,14,16,18,20,25\}$.
 
