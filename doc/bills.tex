@@ -109,7 +109,7 @@ there is only a value of 1 at a column k, indicating that such training row belo
 \subsubsection{Multilayer perceptron}
 The multilayer perceptrons used in this project used a sigmoid function (eq. \ref{eq:sigmoid}) as the
 activation function for the hidden layers and a softmax function (eq. \ref{eq:softmax}) for the output layer
-because the task of classification is for multiple classes.
+because the task of classification is for multiple classes as explained on \cite{alpaydin2004}.
 
 \begin{align}
 \sigma(x) &= \frac{1}{1+e^{-x}} \label{eq:sigmoid} \\ 
@@ -351,7 +351,7 @@ F1Score: & 0.87200 & 0.90090 & 0.84150 & 0.89756 & 0.89655 & 0.91575  \\
 \label{tb:tscores}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
@@ -364,13 +364,13 @@ F1Score:  & 0.75000 & 0.92308 & 0.81081 & 0.72000 & 0.75676 & 0.81481  \\
 \label{tb:vscores}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \caption{Two principal components of PCA}
 \centering
 \includegraphics[width=6cm]{pca.png}
 \label{fig:pca}
 \end{figure}
-
+\clearpage
 \section{Conclusions}
 
 This paper shows an approach to build a paper currency classifier, and shows the results for different
@@ -386,5 +386,8 @@ plot is not a strong argument to support this conclusion.
 The final accuracy of the neural network was about 79\% while the accuracy of random system for the same problem would
 be 16.6\%. To improve further this system, more data of a change in the feature vector could be a good idea. A
 feature vector that would not discard the texture information could produce a better classifier.
+
+\bibliographystyle{plain}
+\bibliography{refs}
 
 \end{document}
