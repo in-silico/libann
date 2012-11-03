@@ -95,8 +95,8 @@ The optimization algorithm used to find the weights $\vec{w}$ that minimized the
 set was conjugate gradient.
 Since this work is focused in a multiclass classification problem, the functions employed to calculate the output $\vec{y}$, the error $E$
 and derivatives of such error with respect to the weights $\nabla E$ were the softmax function (eq. \ref{eq:softmax}), 
-the cross-entropy error function (eq. \ref{eq:crossee}), and the error gradient (eq. \ref{eq:gradSoftMax}) respectively.
-\begin{align}
+the cross-entropy error function (eq. \ref{eq:crossee}), and the error gradient (eq. \ref{eq:gradSoftMax}) respectively \cite{bishop2006pattern}.
+\begin{align} 
 E(\vec{w}) &= -\sum_{n=1}^{N}{\sum_{k=1}^{K}{\vec{t}_{n,k} \ln \vec{y}_{k}(\vec{w},\vec{x_{n}})}} \label{eq:crossee} \\
 \nabla E(\vec{w}) &=  \sum_{n=1}^{N}{(\vec{y}_{n} - \vec{t}_{n})*\vec{x}_{n}} \label{eq:gradSoftMax}
 \end{align}
