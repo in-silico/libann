@@ -61,10 +61,14 @@ void test1() {
     mat2img(grey,tmp[1],0);
     cvSaveImage("test2.jpg",grey);
     sobelFilter(tmp[2],tmp[3],tmp[1]);
-    cart2pol(tmp[0],tmp[1],tmp[2],tmp[3]);
+    cart2pol(tmp[0],tmp[4],tmp[2],tmp[3]);
     
     mat2img(grey,tmp[0],0);
     cvSaveImage("test3.jpg",grey);
+    harrisFilter(tmp[0], tmp[1], 7, 0.01);
+    matNormalize(tmp[4],tmp[0],255);
+    mat2img(grey, tmp[4], 0);
+    cvSaveImage("test4.jpg",grey);
 
     
     rep(i,NTMP) cvReleaseMat( &tmp[i] );

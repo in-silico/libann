@@ -2,6 +2,9 @@
 #include <cv.h>
 #include <highgui.h>
 #include <cmath>
+#include <algorithm>
+
+using namespace std;
 
 #define DEBUG false
 #define rep(i,n) for(int i=0; i<(n); i++)
@@ -77,3 +80,48 @@ void sobelFilter(CvMat *dx, CvMat *dy, CvMat *org) {
     rep(i,2) cvReleaseMat( &f[i] );
 }
 
+void matNormalize(CvMat *dest, CvMat *org, double newmax) {
+    int n = org->height, m = org->width;
+    if (dest->height != n || dest->width != m) throw "Dest and org must have the same dimension";
+    double maxval=-1e100, minval=1e100;
+    rep(i,n) {
+        float *orow = (float*)(org->data.ptr + i*org->step);
+        rep(j,m) {
+            maxval = max((double)orow[j],maxval);
+            minval = min((double)orow[j],minval);
+        }
+    }
+    double scale = newmax/(maxval-minval);
+    rep(i,n) {
+        float *orow = (float*)(org->data.ptr + i*org->step);
+        float *drow = (float*)(dest->data.ptr + i*dest->step);
+        rep(j,m) {
+            drow[j] = (orow[j]-minval)*scale;
+        }
+    }
+
+}
+
+void harrisFilter(CvMat *dest, CvMat *org, int w, double k=0.01) {
+    int n = org->height, m = org->width;
+    CvMat *dx = cvCreateMat(n, m, CV_32F);
+    CvMat *dy = cvCreateMat(n, m, CV_32F);
+    int wh = w/2;
+    sobelFilter(dx,dy,org);    
+    rep(row,org->height) {
+        float *drow = (float*)(dest->data.ptr + row*dest->step);
+        rep(col, org->width) {
+            double a=0, b=0, c=0;
+            repf(i, -wh, wh) repf(j, -wh, wh) {
+                double tx = at(col+j, row+i, dx), ty = at(col+j,row+i,dy);
+                a += tx*tx;
+                c += tx*ty;
+                b += ty*ty;
+            }
+            double ab = a*b - c*c;
+            double apb = a+b;
+            drow[col] = (float)(ab - k*(apb*apb));
+        }
+    }
+    cvReleaseMat( &dx ); cvReleaseMat( &dy ); 
+}
