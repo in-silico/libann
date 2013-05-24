@@ -101,4 +101,26 @@ T& Image<T>::operator()(int i, int j) {
     return data[i*rows + j];
 }
 
+template<class T>
+Image<T>::Image(int row, int cols) {
+    this->row = row; this->cols = cols;
+    data = new T[rows*cols];
+}
+
+template<class T>
+Image<T>::~Image() {
+    delete [] data;
+}
+
+template<class T>
+T* Image<T>::getRow(int r) {
+    return &data[r*cols];
+}
+
+template<class T>
+void Image<T>::operator=(Image &other) {
+    rows = other.rows; cols = other.cols;
+    memcpy(data, other.data, rows*cols*sizeof(T));
+}
+
 #endif
