@@ -5,6 +5,7 @@
 #include <cv.h>
 #include <highgui.h>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ public:
     T *getRow(int r);
     void convolve(Image &kernel);
     void operator=(Image &other);
-    void normalize(int minVal=0, int maxVal=255);
+    void normalize(int maxVal=255);
 };
 
 struct ImgError {
@@ -121,6 +122,26 @@ template<class T>
 void Image<T>::operator=(Image &other) {
     rows = other.rows; cols = other.cols;
     memcpy(data, other.data, rows*cols*sizeof(T));
+}
+
+template<class T>
+void Image<T>::normalize(int maxVal) {
+    double maxv=-1e100, minv=1e100;
+    for(int i=0; i<rows; i++) {
+        T *orow = this->getRow(i);
+        for(int j=0; j<cols; j++) {
+            maxv = max((double)orow[j],maxv);
+            minv = min((double)orow[j],minv);
+        }
+    }
+    double scale = maxVal/(maxv-minv);
+    for(int i=0; i<rows; i++) {
+        T *drow = this->getRow(i);
+        for(int j=0; j<cols; j++) {
+            drow[j] = (T)( (drow[j]-minv)*scale );
+        }
+    }
+
 }
 
 #endif
