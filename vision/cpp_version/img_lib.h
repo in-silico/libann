@@ -147,7 +147,27 @@ void Image<T>::normalize(int maxVal) {
             drow[j] = (T)( (drow[j]-minv)*scale );
         }
     }
+}
 
+template<class T>
+void Image<T>::convolve(Image &kernel) {
+    int wn = kernel.rows, wm = kernel.cols;
+    Image tmp(kernel.n,kernel.m);
+    for(int i=0; i<rows; i++) {
+        T *r = tmp.getRow(i);
+        for(int j=0; j<cols; j++) {
+            T ans = 0;
+            for(int wi=0; wi<wn; wi++) {
+                for (int wj=0; wj<wm; wj++) {
+                    ans += kernel.at(wi,wj)*at(j-(wm/2)+wj,i-(wn/2)+wi);
+                }
+            }
+            r[j] = (T)ans;
+        }
+    }
+    T* tmp2 = data;
+    data = tmp.data;
+    tmp.data = tmp2;
 }
 
 #endif
