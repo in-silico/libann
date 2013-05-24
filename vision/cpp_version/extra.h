@@ -7,19 +7,16 @@
 #include <cmath>
 #include "img_lib.h"
 
-struct cpx
-{
+struct cpx{
   cpx(){}
   cpx(double aa):a(aa){}
   cpx(double aa, double bb):a(aa),b(bb){}
   double a;
   double b;
-  double modsq(void) const
-  {
+  double modsq(void) const {
     return a * a + b * b;
   }
-  cpx bar(void) const
-  {
+  cpx bar(void) const{
     return cpx(a, -b);
   }
 };
@@ -65,9 +62,31 @@ void FFT(cpx *in, cpx *out, int step, int size, int dir){
   }
 }
 
+// returns log_2(n) +1;
+int log_2(int n){
+   int index = 0;
+   while(n){
+      index++;
+      n>>=1;
+   }
+   return index;
+}
 
-template<class T>
-void FFT_image(Image<T> &org, Image<T> &dest){
+void FFT_image(Image<cpx> &org, Image<cpx> &dest){
+   dest = org;
+   dest.x = (org.x == (1<<(log_2(org.x))-1))? org.x : 1<<(log_2(org.x));
+   dest.y = (org.y == (1<<(log_2(org.y))-1))? org.y : 1<<(log_2(org.y));
+   for(int i = 0; i < org.rows; ++i)
+      for(int j = org.x ; j < dest.x ; ++j) 
+         dest(i,j) = 0;
+   for(int i = 0; i < org.cols; ++i)
+      for(int j = org.y; j < dest.y; ++j)
+         dest(i,j) = 0;
+         
+   for(int i = 0; i < dest.rows ; ++i)
+      FFT(dest.getRow(i),dest.getRow(i), 1, dest.rows, 1);
+   
+         
    
 }
 

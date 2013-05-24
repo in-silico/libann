@@ -22,6 +22,7 @@ public:
     ~Image();
     T &operator()(int i, int j);
     T *getRow(int r);
+    T *getCol(int c);
     void convolve(Image &kernel);
     void operator=(Image &other);
     void normalize(int maxVal=255);
@@ -116,6 +117,11 @@ Image<T>::~Image() {
 template<class T>
 T* Image<T>::getRow(int r) {
     return &data[r*cols];
+}
+
+template<class T>
+T* Image<T>::getCol(int c){
+   //por terminar !!
 }
 
 template<class T>
