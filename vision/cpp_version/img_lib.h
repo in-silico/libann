@@ -36,52 +36,52 @@ struct ImgError {
 };
 
 template<class T>
-void gaussianFilter(Image<T> *dest, Image<T> *org, double sigma);
+void gaussianFilter(Image<T> &dest, Image<T> &org, double sigma);
 
 template<class T>
-void sobelFilter(Image<T> *dx, Image<T> *dy, Image<T> *org);
+void sobelFilter(Image<T> &dx, Image<T> &dy, Image<T> &org);
 
 template<class T>
-void harrisFilter(Image<T> *dest, Image<T> *org, int w, double k=0.01);
+void harrisFilter(Image<T> &dest, Image<T> &org, int w, double k=0.01);
 
 template<class T>
-void cart2pol(Image<T> *r, Image<T> *theta, Image<T> *x, Image<T> *y);
+void cart2pol(Image<T> &r, Image<T> &theta, Image<T> &x, Image<T> &y);
 
 template<class T>
-void img2mat(IplImage *ocv, Image<T> *img);
+void img2mat(IplImage &ocv, Image<T> &img);
 
 template<class T>
-void mat2img(Image<T> *img, IplImage *ocv);
+void mat2img(Image<T> &img, IplImage &ocv);
 
 //Implementation
 
 template<class T>
-void gaussianFilter(Image<T> *dest, Image<T> *org, double sigma) {
+void gaussianFilter(Image<T> &dest, Image<T> &org, double sigma) {
 
 }
 
 template<class T>
-void sobelFilter(Image<T> *dx, Image<T> *dy, Image<T> *org) {
+void sobelFilter(Image<T> &dx, Image<T> &dy, Image<T> &org) {
 
 }
 
 template<class T>
-void harrisFilter(Image<T> *dest, Image<T> *org, int w, double k=0.01) {
+void harrisFilter(Image<T> &dest, Image<T> &org, int w, double k=0.01) {
 
 }
 
 template<class T>
-void cart2pol(Image<T> *r, Image<T> *theta, Image<T> *x, Image<T> *y) {
+void cart2pol(Image<T> &r, Image<T> &theta, Image<T> &x, Image<T> &y) {
 
 }
 
 template<class T>
-void img2mat(IplImage *ocv, Image<T> *img) {
+void img2mat(IplImage &ocv, Image<T> &img) {
 
 }
 
 template<class T>
-void mat2img(Image<T> *img, IplImage *ocv) {
+void mat2img(Image<T> &img, IplImage &ocv) {
 
 }
 
