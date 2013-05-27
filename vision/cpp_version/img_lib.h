@@ -25,6 +25,7 @@ public:
     T *getRow(int r);
     T *getCol(int c);
     void convolve(Image &kernel);
+    void nonMaxSupr(int wsize);
     void operator=(Image &other);
     void normalize(float maxVal=255);
     void transpose();
@@ -146,7 +147,6 @@ void img2cvimg(IplImage *ocv, Image<T> &img) {
     }
 }
 
-
 template<class T>
 T& Image<T>::at(int i, int j) {
     if (i<0) i=0;
@@ -244,6 +244,29 @@ void Image<T>::convolve(Image &kernel) {
     T* tmp2 = data;
     data = tmp.data;
     tmp.data = tmp2;
+}
+
+template<class T>
+void Image<T>::nonMaxSupr(int wsize) {
+    Image<T> tmp(1+(rows-1)/wsize,1+(cols-1)/wsize);
+    for (int i=0; i<rows; i++) {
+        T* r = getRow(i);
+        int ni = i/rows;
+        T *nr = tmp.getRow(ni);
+        for (int j=0; j<cols; j++) {
+            int nj = (j/cols);            
+            nr[nj] = max(nr[nj], r[j]);
+        }
+    }
+    for (int i=0; i<rows; i++) {
+        T* r = getRow(i);
+        int ni = i/rows;
+        T *nr = tmp.getRow(ni);
+        for (int j=0; j<cols; j++) {
+            int nj = (j/cols);            
+            r[j] = (nr[nj] <= r[j]) ? 255 : 0;
+        }
+    }
 }
 
 #endif
