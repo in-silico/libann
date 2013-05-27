@@ -45,16 +45,31 @@ void test1() {
     Image<float> img(n,m);
     Image<float> img2(n,m);
     cvimg2img(img, cvg);
-    
     for (int i=0; i<n; i++) {
         for (int j=0; j<m; j++) {
             img2(i,j) = 255 - img(i,j);
         }
-    }
-    
+    }   
     saveImg("test2.jpg", img2);
 }
 
+void test2(){
+    IplImage *cvi = cvLoadImage("test.jpg");
+    int m = cvi->width, n = cvi->height;
+    IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
+    cvCvtColor(cvi,cvg,CV_RGB2GRAY); 
+    Image<float> img(n,m);
+    cvimg2img(img, cvg);
+    Image<float> dx(n,m);
+    Image<float> dy(n,m);
+    sobelFilter(dx, dy, img);
+}
+
 int main() {
-    test1();
+    //test1();
+    try{
+       test2();    
+    } catch(ImgError e) {
+       printf("error %d: %s\n", e.code, e.message.c_str());
+    }
 }

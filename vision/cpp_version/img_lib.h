@@ -68,19 +68,26 @@ int diff[3] = {1, 0, -1};
 
 template<class T>
 void sobelFilter(Image<T> &dx, Image<T> &dy, Image<T> &org) {
-  Image<T> gaussian_kernel_x(1, sizeof(gaussian));
-  Image<T> kernel_dx(sizeof(diff), 1);
-  Image<T> gaussian_kernel_y(sizeof(gaussian), 1);
-  Image<T> kernel_dy(1, sizeof(diff));
-  for(int i = 0; i < sizeof(gaussian); i++){
-    gaussian_kernel_x(i, 0) = gaussian[i];
-    gaussian_kernel_y(0, i) = gaussian[i];
-  }
-  for(int i = 0; i < sizeof(diff); i++){
-    kernel_dx(0, i) = diff[i];
-    kernel_dy(i, 0) = diff[i];
-  }
-  printf("%d\n", sizeof(diff));
+    int tamgaussian = sizeof(gaussian) / sizeof(int);
+    int tamdiff = sizeof(diff) / sizeof(int);
+    Image<T> gaussian_kernel_x(1, tamgaussian);
+    Image<T> kernel_dx(tamdiff, 1);
+    Image<T> gaussian_kernel_y(tamgaussian, 1);
+    Image<T> kernel_dy(1, tamdiff);
+    for(int i = 0; i < tamgaussian; i++){
+        gaussian_kernel_x(0, i) = gaussian[i];
+        gaussian_kernel_y(i, 0) = gaussian[i];
+    }
+    for(int i = 0; i < tamdiff; i++){
+        kernel_dx(i, 0) = diff[i];
+        kernel_dy(0, i) = diff[i];
+    }
+    dx = org;
+    dx.convolve(gaussian_kernel_x);
+    dx.convolve(kernel_dx);
+    dy = org;
+    dy.convolve(gaussian_kernel_y);
+    dy.convolve(kernel_dy);
 }
 
 template<class T>
@@ -164,6 +171,8 @@ T* Image<T>::getCol(int c){
 
 template<class T>
 void Image<T>::operator=(Image &other) {
+    if (other.rows != rows || other.cols != cols)
+        throw ImgError(11, "images of different dimensions on a copy operation.");
     rows = other.rows; cols = other.cols;
     memcpy(data, other.data, rows*cols*sizeof(T));
 }
@@ -190,17 +199,17 @@ void Image<T>::normalize(int maxVal) {
 template<class T>
 void Image<T>::convolve(Image &kernel) {
     int wn = kernel.rows, wm = kernel.cols;
-    Image tmp(kernel.n,kernel.m);
+    Image tmp(rows, cols);
     for(int i=0; i<rows; i++) {
         T *r = tmp.getRow(i);
         for(int j=0; j<cols; j++) {
             T ans = 0;
             for(int wi=0; wi<wn; wi++) {
                 for (int wj=0; wj<wm; wj++) {
-                    ans += kernel.at(wi,wj)*at(j-(wm/2)+wj,i-(wn/2)+wi);
+                    ans += kernel.at(wi,wj)*at(i-(wn/2)+wi,j-(wm/2)+wj);
                 }
             }
-            r[j] = (T)ans;
+            r[j] = ans;
         }
     }
     T* tmp2 = data;
