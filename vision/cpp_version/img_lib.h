@@ -25,7 +25,7 @@ public:
     T *getCol(int c);
     void convolve(Image &kernel);
     void operator=(Image &other);
-    void normalize(int maxVal=255);
+    void normalize(float maxVal=255);
     void transpose();
 };
 
@@ -165,7 +165,7 @@ void Image<T>::transpose() {
 }
 
 template<class T>
-void Image<T>::normalize(int maxVal) {
+void Image<T>::normalize(float maxVal) {
     double maxv=-1e100, minv=1e100;
     for(int i=0; i<rows; i++) {
         T *orow = this->getRow(i);
