@@ -139,7 +139,11 @@ T* Image<T>::getRow(int r) {
 
 template<class T>
 T* Image<T>::getCol(int c){
-   //por terminar !!
+    T * col =  new T[rows];
+    for(int i = 0; i < rows; ++i)
+        col[i] = data[i*cols + c];
+        
+    return col;
 }
 
 template<class T>
