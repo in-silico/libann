@@ -13,11 +13,11 @@ using namespace std;
 
 template<class T>
 class Image {
+public:   
+    T &at(int i, int j);
     T *data;
     int rows,cols;
-    
-    T &at(int i, int j);
-public:
+
     Image(int row, int cols);
     ~Image();
     T &operator()(int i, int j);
@@ -51,10 +51,10 @@ template<class T>
 void cart2pol(Image<T> &r, Image<T> &theta, Image<T> &x, Image<T> &y);
 
 template<class T>
-void img2mat(IplImage &ocv, Image<T> &img);
+void img2cvimg(IplImage *ocv, Image<T> &img);
 
 template<class T>
-void mat2img(Image<T> &img, IplImage &ocv);
+void cvimg2img(Image<T> &img, IplImage *ocv);
 
 //Implementation
 
@@ -79,13 +79,31 @@ void cart2pol(Image<T> &r, Image<T> &theta, Image<T> &x, Image<T> &y) {
 }
 
 template<class T>
-void img2mat(IplImage &ocv, Image<T> &img) {
-
+void cvimg2img(Image<T> &img, IplImage *ocv) {
+    int n = ocv->height, m = ocv->width, nch = ocv->nChannels;
+    int ch=0;
+    for(int i=0; i<n; i++) {
+        uchar *orow = (uchar*)(ocv->imageData + i*ocv->widthStep);
+        T *drow = img.getRow(i);
+        for (int j=0; j<m; j++) {
+            drow[j] = orow[j*nch + ch];
+        }
+    }
 }
 
 template<class T>
-void mat2img(Image<T> &img, IplImage &ocv) {
-
+void img2cvimg(IplImage *ocv, Image<T> &img) {
+    int n = ocv->height, m = ocv->width, nch = ocv->nChannels;
+    int ch=0;
+    for(int i=0; i<n; i++) {
+        uchar *drow = (uchar*)(ocv->imageData + i*ocv->widthStep);
+        T *orow = img.getRow(i);
+        for(int j=0; j<m; j++) {
+            T x = orow[j];
+            if (x<0) x=0; if(x>255) x=255;
+            drow[j*nch + ch] = x;
+        }
+    }
 }
 
 
@@ -95,18 +113,18 @@ T& Image<T>::at(int i, int j) {
     if (j<0) j=0;
     if (i>=rows) i=rows-1;
     if (j>=cols) j=cols-1;
-    return data[i*rows + j];
+    return data[i*cols + j];
 }
 
 template<class T>
 T& Image<T>::operator()(int i, int j) {
     if (i<0 || j<0 || i>=rows || j>=cols) throw ImgError(1,"Out of bound index exception");
-    return data[i*rows + j];
+    return data[i*cols + j];
 }
 
 template<class T>
 Image<T>::Image(int row, int cols) {
-    this->row = row; this->cols = cols;
+    this->rows = row; this->cols = cols;
     data = new T[rows*cols];
 }
 
