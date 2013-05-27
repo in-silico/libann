@@ -6,6 +6,7 @@
 #include <highgui.h>
 #include <string>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -57,9 +58,26 @@ void cvimg2img(Image<T> &img, IplImage *ocv);
 
 //Implementation
 
+const double PI = acos(-1);
+
 template<class T>
 void gaussianFilter(Image<T> &dest, Image<T> &org, double sigma) {
+    if (dest.rows != org.rows && dest.cols != org.cols) throw ImgError(10, "Output and input images must have the same dimensions on Gaussian Filter");
+    int w = (int)round(3*sigma);
+    if ( (w%2)==0 ) w++;
+    int wh = w/2;
+    double tss = 2*sigma*sigma;
+    double coef = 1.0/(PI*tss);
+    Image<T> tmp(w,w);
+    double sum=0;
+    for(int x=-wh; x<=wh; x++) for(int y=-wh;y<=wh;y++) {
+        tmp(x+wh, y+wh) = coef*exp(-(x*x+y*y)/tss);
+        sum += tmp(x+wh,y+wh);
+    }
+    for(int i=0; i<w; i++) for(int j=0; j<w; j++) tmp(i,j) = tmp(i,j) / sum;
 
+    dest=org;
+    dest.convolve(tmp);
 }
 
 template<class T>
@@ -174,14 +192,14 @@ void Image<T>::normalize(int maxVal) {
 template<class T>
 void Image<T>::convolve(Image &kernel) {
     int wn = kernel.rows, wm = kernel.cols;
-    Image tmp(kernel.n,kernel.m);
+    Image tmp(rows,cols);
     for(int i=0; i<rows; i++) {
         T *r = tmp.getRow(i);
         for(int j=0; j<cols; j++) {
             T ans = 0;
             for(int wi=0; wi<wn; wi++) {
                 for (int wj=0; wj<wm; wj++) {
-                    ans += kernel.at(wi,wj)*at(j-(wm/2)+wj,i-(wn/2)+wi);
+                    ans += kernel.at(wi,wj)*at(i-(wn/2)+wi, j-(wm/2)+wj);
                 }
             }
             r[j] = (T)ans;
