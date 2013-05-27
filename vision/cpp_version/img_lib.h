@@ -283,22 +283,28 @@ void Image<T>::convolve(Image &kernel) {
 template<class T>
 void Image<T>::nonMaxSupr(int wsize) {
     Image<T> tmp(1+(rows-1)/wsize,1+(cols-1)/wsize);
+    //for (int i=0;i<tmp.rows;i++) for (int j=0; j<tmp.cols; j++) tmp(i,j)=-1;
     for (int i=0; i<rows; i++) {
         T* r = getRow(i);
-        int ni = i/rows;
+        int ni = i/wsize;
         T *nr = tmp.getRow(ni);
         for (int j=0; j<cols; j++) {
-            int nj = (j/cols);            
+            int nj = (j/wsize);            
             nr[nj] = max(nr[nj], r[j]);
         }
     }
     for (int i=0; i<rows; i++) {
         T* r = getRow(i);
-        int ni = i/rows;
+        int ni = i/wsize;
         T *nr = tmp.getRow(ni);
         for (int j=0; j<cols; j++) {
-            int nj = (j/cols);            
-            r[j] = (nr[nj] <= r[j]) ? 255 : 0;
+            int nj = (j/wsize);
+            if (r[j] >= nr[nj]) {
+                printf("%d %d\n",i,j);
+                r[j]=255;
+            } else {
+                r[j] = 0;
+            }         
         }
     }
 }

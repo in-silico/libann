@@ -15,10 +15,9 @@
  *
  * =====================================================================================
  */
-
+#include <cstdio>
 #include <iostream>
 #include "img_lib.h"
-#include <cstdio>
 
 using namespace std;
 
@@ -80,6 +79,7 @@ void test2(){
     Image<float> dx(n,m);
     Image<float> dy(n,m);
     harrisFilter(dest, img);
+    dest.nonMaxSupr(100);
     /*Image<float> r(n,m);
     Image<float> t(n,m);
     cart2pol(r, t, dx, dy);
