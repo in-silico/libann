@@ -26,6 +26,7 @@ public:
     void convolve(Image &kernel);
     void operator=(Image &other);
     void normalize(int maxVal=255);
+    void transpose();
 };
 
 struct ImgError {
@@ -132,6 +133,17 @@ template<class T>
 void Image<T>::operator=(Image &other) {
     rows = other.rows; cols = other.cols;
     memcpy(data, other.data, rows*cols*sizeof(T));
+}
+
+template<class T>
+void Image<T>::transpose() {
+    for(int i = 0; i< rows; i++){
+        for(int j = i + 1; j< cols; j++){
+            T tmp = this->at(i,j);
+            this->at(i,j) = this->at(j,i);
+            this->at(j,i) = tmp;
+        }
+    }
 }
 
 template<class T>

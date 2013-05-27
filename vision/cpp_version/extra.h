@@ -72,22 +72,30 @@ int log_2(int n){
    return index;
 }
 
-void FFT_image(Image<cpx> &org, Image<cpx> &dest){
-   dest = org;
-   dest.x = (org.x == (1<<(log_2(org.x))-1))? org.x : 1<<(log_2(org.x));
-   dest.y = (org.y == (1<<(log_2(org.y))-1))? org.y : 1<<(log_2(org.y));
-   for(int i = 0; i < org.rows; ++i)
-      for(int j = org.x ; j < dest.x ; ++j) 
-         dest(i,j) = 0;
-   for(int i = 0; i < org.cols; ++i)
-      for(int j = org.y; j < dest.y; ++j)
-         dest(i,j) = 0;
-         
-   for(int i = 0; i < dest.rows ; ++i)
-      FFT(dest.getRow(i),dest.getRow(i), 1, dest.rows, 1);
+void FFT_image(Image<cpx> &org, Image<cpx> &dest, int dir){
+    dest = org;
+    dest.rows = (dest.rows == (1<<(log_2(dest.rows))-1))? dest.rows : 1<<(log_2(dest.rows));
+    dest.cols = (org.cols == (1<<(log_2(org.cols))-1))? org.cols : 1<<(log_2(org.cols));
+    //padding
+    for(int i = 0; i < org.rows; ++i)
+        for(int j = dest.rows ; j < dest.rows ; ++j) 
+            dest(i,j) = 0;
+    for(int i = 0; i < org.cols; ++i)
+        for(int j = org.cols; j < dest.cols; ++j)
+            dest(i,j) = 0;
    
-         
-   
+    Image ini = dest;
+    
+    for(int i = 0; i < dest.rows ; ++i)
+        FFT(ini.getRow(i),dest.getRow(i), 1, dest.cols, dir);
+    
+    ini = dest;
+    ini.transpose();
+    dest.transpose();
+    for(int i = 0; i < dest.rows ; ++i)
+        FFT(ini.getRow(i),dest.getRow(i), 1, dest.cols, dir);
+        
+    dest.transpose;
 }
 
 #endif
