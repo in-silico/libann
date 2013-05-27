@@ -16,7 +16,11 @@
  * =====================================================================================
  */
 
+#include <iostream>
 #include "img_lib.h"
+#include <cstdio>
+
+using namespace std;
 
 /*template<class T>
 Image<T>* loadImg(const char *s) {
@@ -37,6 +41,21 @@ void saveImg(const char *s, Image<T> &img) {
     cvSaveImage(s,cvg);
 }
 
+template <class T>
+void negative(Image<T> &img2, Image<T> &img) {
+    for (int i=0; i<img.rows; i++) {
+        for (int j=0; j<img.cols; j++) {
+            img2(i,j) = 255 - img(i,j);
+        }
+    }
+}
+
+
+template <class T>
+void testFilter(Image<T> &img2, Image<T> &img) {
+    gaussianFilter(img2, img, 2.0);
+}
+
 void test1() {
     IplImage *cvi = cvLoadImage("test.jpg");
     int m = cvi->width, n = cvi->height;
@@ -45,11 +64,8 @@ void test1() {
     Image<float> img(n,m);
     Image<float> img2(n,m);
     cvimg2img(img, cvg);
-    for (int i=0; i<n; i++) {
-        for (int j=0; j<m; j++) {
-            img2(i,j) = 255 - img(i,j);
-        }
-    }   
+    
+    testFilter(img2, img);    
     saveImg("test2.jpg", img2);
 }
 

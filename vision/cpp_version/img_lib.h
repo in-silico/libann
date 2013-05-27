@@ -6,7 +6,7 @@
 #include <highgui.h>
 #include <string>
 #include <algorithm>
-#include <cstdio>
+#include <cmath>
 
 using namespace std;
 
@@ -26,7 +26,8 @@ public:
     T *getCol(int c);
     void convolve(Image &kernel);
     void operator=(Image &other);
-    void normalize(int maxVal=255);
+    void normalize(float maxVal=255);
+    void transpose();
 };
 
 struct ImgError {
@@ -58,9 +59,26 @@ void cvimg2img(Image<T> &img, IplImage *ocv);
 
 //Implementation
 
+const double PI = acos(-1);
+
 template<class T>
 void gaussianFilter(Image<T> &dest, Image<T> &org, double sigma) {
+    if (dest.rows != org.rows && dest.cols != org.cols) throw ImgError(10, "Output and input images must have the same dimensions on Gaussian Filter");
+    int w = (int)round(3*sigma);
+    if ( (w%2)==0 ) w++;
+    int wh = w/2;
+    double tss = 2*sigma*sigma;
+    double coef = 1.0/(PI*tss);
+    Image<T> tmp(w,w);
+    double sum=0;
+    for(int x=-wh; x<=wh; x++) for(int y=-wh;y<=wh;y++) {
+        tmp(x+wh, y+wh) = coef*exp(-(x*x+y*y)/tss);
+        sum += tmp(x+wh,y+wh);
+    }
+    for(int i=0; i<w; i++) for(int j=0; j<w; j++) tmp(i,j) = tmp(i,j) / sum;
 
+    dest=org;
+    dest.convolve(tmp);
 }
 
 int gaussian[3] = {1 , 2, 1};
@@ -178,7 +196,18 @@ void Image<T>::operator=(Image &other) {
 }
 
 template<class T>
-void Image<T>::normalize(int maxVal) {
+void Image<T>::transpose() {
+    for(int i = 0; i< rows; i++){
+        for(int j = i + 1; j< cols; j++){
+            T tmp = this->at(i,j);
+            this->at(i,j) = this->at(j,i);
+            this->at(j,i) = tmp;
+        }
+    }
+}
+
+template<class T>
+void Image<T>::normalize(float maxVal) {
     double maxv=-1e100, minv=1e100;
     for(int i=0; i<rows; i++) {
         T *orow = this->getRow(i);
