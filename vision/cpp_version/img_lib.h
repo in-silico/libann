@@ -6,6 +6,7 @@
 #include <highgui.h>
 #include <string>
 #include <algorithm>
+#include <cstdio>
 
 using namespace std;
 
@@ -62,9 +63,24 @@ void gaussianFilter(Image<T> &dest, Image<T> &org, double sigma) {
 
 }
 
+int gaussian[3] = {1 , 2, 1};
+int diff[3] = {1, 0, -1};
+
 template<class T>
 void sobelFilter(Image<T> &dx, Image<T> &dy, Image<T> &org) {
-
+  Image<T> gaussian_kernel_x(1, sizeof(gaussian));
+  Image<T> kernel_dx(sizeof(diff), 1);
+  Image<T> gaussian_kernel_y(sizeof(gaussian), 1);
+  Image<T> kernel_dy(1, sizeof(diff));
+  for(int i = 0; i < sizeof(gaussian); i++){
+    gaussian_kernel_x(i, 0) = gaussian[i];
+    gaussian_kernel_y(0, i) = gaussian[i];
+  }
+  for(int i = 0; i < sizeof(diff); i++){
+    kernel_dx(0, i) = diff[i];
+    kernel_dy(i, 0) = diff[i];
+  }
+  printf("%d\n", sizeof(diff));
 }
 
 template<class T>
