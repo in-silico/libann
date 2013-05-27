@@ -26,7 +26,8 @@ public:
     T *getCol(int c);
     void convolve(Image &kernel);
     void operator=(Image &other);
-    void normalize(int maxVal=255);
+    void normalize(float maxVal=255);
+    void transpose();
 };
 
 struct ImgError {
@@ -171,7 +172,18 @@ void Image<T>::operator=(Image &other) {
 }
 
 template<class T>
-void Image<T>::normalize(int maxVal) {
+void Image<T>::transpose() {
+    for(int i = 0; i< rows; i++){
+        for(int j = i + 1; j< cols; j++){
+            T tmp = this->at(i,j);
+            this->at(i,j) = this->at(j,i);
+            this->at(j,i) = tmp;
+        }
+    }
+}
+
+template<class T>
+void Image<T>::normalize(float maxVal) {
     double maxv=-1e100, minv=1e100;
     for(int i=0; i<rows; i++) {
         T *orow = this->getRow(i);

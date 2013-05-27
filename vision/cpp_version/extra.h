@@ -72,22 +72,22 @@ int log_2(int n){
    return index;
 }
 
-void FFT_image(Image<cpx> &org, Image<cpx> &dest){
-   dest = org;
-   dest.x = (org.x == (1<<(log_2(org.x))-1))? org.x : 1<<(log_2(org.x));
-   dest.y = (org.y == (1<<(log_2(org.y))-1))? org.y : 1<<(log_2(org.y));
-   for(int i = 0; i < org.rows; ++i)
-      for(int j = org.x ; j < dest.x ; ++j) 
-         dest(i,j) = 0;
-   for(int i = 0; i < org.cols; ++i)
-      for(int j = org.y; j < dest.y; ++j)
-         dest(i,j) = 0;
-         
-   for(int i = 0; i < dest.rows ; ++i)
-      FFT(dest.getRow(i),dest.getRow(i), 1, dest.rows, 1);
-   
-         
-   
+void FFT_image(Image<cpx> &org, Image<cpx> &dest, int dir=1){
+    dest = org;
+    if (dest.rows != (1<<(log_2(dest.rows))-1)) throw ImgError(2,"Cols' size is not a power of 2");
+    if (org.cols  != (1<<(log_2(org.cols))-1)) throw ImgError(3,"Rows' size is not a power of 2");
+    Image<cpx> ini(dest.rows,dest.cols);
+    ini = dest; 
+    for(int i = 0; i < dest.rows ; ++i)
+        FFT(ini.getRow(i),dest.getRow(i), 1, dest.cols, dir);
+    
+    ini = dest;
+    ini.transpose();
+    dest.transpose();
+    for(int i = 0; i < dest.rows ; ++i)
+        FFT(ini.getRow(i),dest.getRow(i), 1, dest.cols, dir);
+        
+    dest.transpose();
 }
 
 #endif
