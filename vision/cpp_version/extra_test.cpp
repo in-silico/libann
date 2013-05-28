@@ -34,11 +34,17 @@ void test1() {
         }
     }
     
-    //FFT_image(ori,dest);
+    FFT_image(ori,dest);
+    int tmp=30;
+    for (int i=-tmp; i<=tmp; i++) for (int j=-tmp; j<=tmp; j++) {
+        dest((i+Nrows)%Nrows, (j+Ncols) % Ncols) = 0;
+    }
+    FFT_image(dest,ori,-1);
+    
     dest = ori;
     for(int i = 0; i < img2.rows; ++i)
         for(int j = 0; j < img2.cols; ++j)
-            img2(i,j) = dest(i,j).a;//sqrt(dest(i,j).modsq());
+            img2(i,j) = sqrt(dest(i,j).modsq()) / (Nrows*Ncols);
             
     //img2.normalize(255);
 
