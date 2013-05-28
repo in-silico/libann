@@ -75,10 +75,17 @@ void test2(){
     IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
     cvCvtColor(cvi,cvg,CV_RGB2GRAY); 
     Image<float> img(n,m);
+    Image<float> dest(n,m);
     cvimg2img(img, cvg);
     Image<float> dx(n,m);
     Image<float> dy(n,m);
-    sobelFilter(dx, dy, img);
+    harrisFilter(dest, img);
+    /*Image<float> r(n,m);
+    Image<float> t(n,m);
+    cart2pol(r, t, dx, dy);
+    r.normalize(255);*/
+    dest.normalize(255);
+    saveImg("test2.jpg", dest);
 }
 
 int main() {
