@@ -7,13 +7,32 @@
 #include <string>
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
 //definitions
 
 template<class T>
+struct Point2D {
+    T x,y;
+
+    Point2D(T xx, T yy) {x=xx; y=yy;}
+    ~Point2D() {}
+    Point2D<T> operator+(Point2D<T> p) { return Point2D<T>(x+p.x, y+p.y); }
+    Point2D<T> operator-(Point2D<T> p) { return Point2D<T>(x-p.x, y-p.y); }
+    T dot(Point2D<T> p) { return x*p.x + y*p.y; }
+    T norm() { return sqrt( dot(*this) ); }
+    T dist(Point2D<T> p) { return (p - *this).norm(); }
+};
+
+typedef Point2D<int> ipt; //integer coordinate point 2D
+typedef vector< Point2D<int> > vipt; //vector of ipt
+typedef vector< pair<ipt,ipt> > corresp; //vector of pairs of ipt
+
+template<class T>
 class Image {
+    bool isMax(int r, int c, int w);
 public:   
     T &at(int i, int j);
     T *data;
@@ -25,10 +44,21 @@ public:
     T *getRow(int r);
     T *getCol(int c);
     void convolve(Image &kernel);
-    void nonMaxSupr(int wsize);
+    void nonMaxSupr(int wsize, T thresh, vipt &ans);
     void operator=(Image &other);
     void normalize(float maxVal=255);
     void transpose();
+};
+
+struct CorrespParams {
+    int harrisW, nmsW;
+    double harrisK, nmsThresh;
+    double matchThresh;
+
+    CorrespParams() { 
+        harrisW=5; nmsThresh=0.01; nmsW=7; nmsThresh=1e7; 
+        matchThresh = 3;
+    }
 };
 
 struct ImgError {
@@ -48,6 +78,12 @@ void sobelFilter(Image<T> &dx, Image<T> &dy, Image<T> &org);
 
 template<class T>
 void harrisFilter(Image<T> &dest, Image<T> &org, int w = 5, double k=0.01);
+
+template<class T>
+double correspScore(Image<T> img1, Image<T> img2, ipt pt1, ipt pt2);
+
+template<class T>
+void findCorrespondences(corresp &ans, Image<T> img1, Image<T> img2, CorrespParams &p);
 
 template<class T>
 void cart2pol(Image<T> &r, Image<T> &theta, Image<T> &x, Image<T> &y);
@@ -182,6 +218,41 @@ void img2cvimg(IplImage *ocv, Image<T> &img) {
 }
 
 template<class T>
+double correspScore(Image<T> img1, Image<T> img2, ipt pt1, ipt pt2) {
+    return 0;
+}
+
+
+template<class T>
+void findCorrespondences(corresp &ans, Image<T> img1, Image<T> img2, CorrespParams &p) {
+    Image<T> tmp1(img1.rows, img1.cols);
+    Image<T> tmp2(img2.rows, img2.cols);
+
+    harrisFilter(tmp1, img1, p.harrisW, p.harrisK);
+    harrisFilter(tmp2, img2, p.harrisW, p.harrisK);
+
+    vipt pt1, pt2;
+    tmp1.nonMaxSupr(p.nmsW,p.nmsThresh,pt1);
+    tmp2.nonMaxSupr(p.nmsW,p.nmsThresh,pt2);
+
+    ans.clear();
+    for (int i=0; i<pt1.size(); i++) {
+        int best_ix=-1;
+        double best_score=-1e100; //minus infinity
+        for (int j=0; j<pt2.size(); j++) {
+            double c_score = correspScore(img1, img2, pt1[i], pt2[j], p);
+            if (c_score > best_score) {
+                //this one is better
+                best_ix = j;
+                best_score = c_score;
+            }
+        }
+        if (best_score > p.matchThresh) 
+            ans.push_back( pair<ipt,ipt>(pt1[i],pt2[best_ix]) );
+    }
+}
+
+template<class T>
 T& Image<T>::at(int i, int j) {
     if (i<0) i=0;
     if (j<0) j=0;
@@ -281,30 +352,24 @@ void Image<T>::convolve(Image &kernel) {
 }
 
 template<class T>
-void Image<T>::nonMaxSupr(int wsize) {
-    Image<T> tmp(1+(rows-1)/wsize,1+(cols-1)/wsize);
-    //for (int i=0;i<tmp.rows;i++) for (int j=0; j<tmp.cols; j++) tmp(i,j)=-1;
-    for (int i=0; i<rows; i++) {
-        T* r = getRow(i);
-        int ni = i/wsize;
-        T *nr = tmp.getRow(ni);
-        for (int j=0; j<cols; j++) {
-            int nj = (j/wsize);            
-            nr[nj] = max(nr[nj], r[j]);
+bool Image<T>::isMax(int r, int c, int w) {
+    int wm = w/2;
+    for (int i=-wm; i<=wm; i++)
+        for (int j=-wm; j<wm; j++) {
+            if (at(r-i,c-j) > at(r,c)) return false;
         }
-    }
+    return true;
+}
+
+template<class T>
+void Image<T>::nonMaxSupr(int wsize, T thresh, vipt &ans) {
+    ans.clear();
     for (int i=0; i<rows; i++) {
-        T* r = getRow(i);
-        int ni = i/wsize;
-        T *nr = tmp.getRow(ni);
+        T *r = getRow(i);
         for (int j=0; j<cols; j++) {
-            int nj = (j/wsize);
-            if (r[j] >= nr[nj]) {
-                printf("%d %d\n",i,j);
-                r[j]=255;
-            } else {
-                r[j] = 0;
-            }         
+            if (r[j] > thresh && isMax(i,j,wsize)) {
+                ans.push_back(ipt(i,j));
+            }
         }
     }
 }

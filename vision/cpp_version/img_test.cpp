@@ -55,6 +55,34 @@ void testFilter(Image<T> &img2, Image<T> &img) {
     gaussianFilter(img2, img, 2.0);
 }
 
+template<class T>
+void drawCorner(Image<T> &img, Point2D<int> &p, int w=5) {
+    int wh = w/2;
+    for (int i=-wh; i<=wh; i++) {
+        for (int j=-wh; j<=wh; j++) {
+            if (i==j || i==-j) {
+                int nr = p.x+i, nc = p.y+j;
+                if (nr>=0 && nr<img.rows && nc>=0 && nc<img.cols) img(nr,nc)=0; //set corner to black
+            }
+        }
+    }
+}
+
+template <class T>
+void cornerTest(Image<T> &img2, Image<T> &img) {
+    Image<T> tmp(img.rows, img.cols);
+    gaussianFilter(img2, img, 2.0);
+    harrisFilter(tmp, img2);
+    img2 = img;
+    vector< Point2D<int> > corners;
+    tmp.nonMaxSupr(7,1E6,corners);
+    int n = corners.size();
+    printf("%d\n",n);
+    for (int i=0; i<n; i++) {
+        drawCorner(img2, corners[i]);
+    }
+}
+
 void test1() {
     IplImage *cvi = cvLoadImage("test.jpg");
     int m = cvi->width, n = cvi->height;
@@ -64,8 +92,9 @@ void test1() {
     Image<float> img2(n,m);
     cvimg2img(img, cvg);
     
-    testFilter(img2, img);    
+    cornerTest(img2, img);    
     saveImg("test2.jpg", img2);
+    cvReleaseImage( &cvi ); cvReleaseImage( &cvg );
 }
 
 void test2(){
@@ -79,7 +108,6 @@ void test2(){
     Image<float> dx(n,m);
     Image<float> dy(n,m);
     harrisFilter(dest, img);
-    dest.nonMaxSupr(100);
     /*Image<float> r(n,m);
     Image<float> t(n,m);
     cart2pol(r, t, dx, dy);
@@ -89,10 +117,10 @@ void test2(){
 }
 
 int main() {
-    //test1();
     try{
-       test2();    
+        test1();
+        //test2();    
     } catch(ImgError e) {
-       printf("error %d: %s\n", e.code, e.message.c_str());
+        printf("error %d: %s\n", e.code, e.message.c_str());
     }
 }
