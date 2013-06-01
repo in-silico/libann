@@ -51,13 +51,14 @@ public:
 };
 
 struct CorrespParams {
-    int harrisW, nmsW;
+    int harrisW, nmsW, scoreW;
     double harrisK, nmsThresh;
     double matchThresh;
+    char scoreMethod;
 
     CorrespParams() { 
         harrisW=5; nmsThresh=0.01; nmsW=7; nmsThresh=1e7; 
-        matchThresh = 3;
+        matchThresh = 3; scoreMethod=0; scoreW=9;
     }
 };
 
@@ -80,10 +81,10 @@ template<class T>
 void harrisFilter(Image<T> &dest, Image<T> &org, int w = 5, double k=0.01);
 
 template<class T>
-double correspScore(Image<T> img1, Image<T> img2, ipt pt1, ipt pt2);
+double correspScore(Image<T> &img1, Image<T> &img2, ipt pt1, ipt pt2, CorrespParams &p);
 
 template<class T>
-void findCorrespondences(corresp &ans, Image<T> img1, Image<T> img2, CorrespParams &p);
+void findCorrespondences(corresp &ans, Image<T> &img1, Image<T> &img2, CorrespParams &p);
 
 template<class T>
 void cart2pol(Image<T> &r, Image<T> &theta, Image<T> &x, Image<T> &y);
@@ -218,13 +219,29 @@ void img2cvimg(IplImage *ocv, Image<T> &img) {
 }
 
 template<class T>
-double correspScore(Image<T> img1, Image<T> img2, ipt pt1, ipt pt2) {
-    return 0;
+double correspScore(Image<T> &img1, Image<T> &img2, ipt pt1, ipt pt2, CorrespParams &p) {
+    int wh = p.scoreW;
+    if (p.scoreMethod == 0) {
+        //Square difference
+        double tmp=0, dif;        
+        for (int i=-wh; i<=wh; i++) {
+            for (int j=-wh; j<=wh; j++) {
+                T v1 = img1.at(pt1.x+i, pt1.y+j);
+                T v2 = img2.at(pt2.x+i, pt2.y+j);
+                dif = v1 - v2;
+                tmp += (dif*dif);
+            }
+        }
+        return -tmp;
+    } else {
+        //normalized cross-correlation
+        return 0;
+    }
 }
 
 
 template<class T>
-void findCorrespondences(corresp &ans, Image<T> img1, Image<T> img2, CorrespParams &p) {
+void findCorrespondences(corresp &ans, Image<T> &img1, Image<T> &img2, CorrespParams &p) {
     Image<T> tmp1(img1.rows, img1.cols);
     Image<T> tmp2(img2.rows, img2.cols);
 

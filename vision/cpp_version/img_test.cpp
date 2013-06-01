@@ -75,7 +75,7 @@ void cornerTest(Image<T> &img2, Image<T> &img) {
     harrisFilter(tmp, img2);
     img2 = img;
     vector< Point2D<int> > corners;
-    tmp.nonMaxSupr(7,1E6,corners);
+    tmp.nonMaxSupr(7,1E8,corners);
     int n = corners.size();
     printf("%d\n",n);
     for (int i=0; i<n; i++) {
@@ -83,17 +83,32 @@ void cornerTest(Image<T> &img2, Image<T> &img) {
     }
 }
 
+template<class T>
+void correspTest(Image<T> &ans, Image<T> &img1, Image<T> &img2) {
+    corresp pts; CorrespParams params;
+    params.matchThresh=-20;
+    params.nmsThresh=1e8;
+    findCorrespondences(pts, img1, img2, params);
+    for (int i=0; i<pts.size(); i++) {
+        ipt p1 = pts[i].first, p2 = pts[i].second;
+        printf("(%d, %d) -> (%d, %d)\n",p1.x,p1.y,p2.x,p2.y);
+    }
+    printf("Done\n");
+}
+
 void test1() {
     IplImage *cvi = cvLoadImage("test.jpg");
     int m = cvi->width, n = cvi->height;
     IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
     cvCvtColor(cvi,cvg,CV_RGB2GRAY);
-    Image<float> img(n,m);
+    Image<float> img1(n,m);
     Image<float> img2(n,m);
-    cvimg2img(img, cvg);
+    Image<float> ans(n,m);
+    cvimg2img(img1, cvg); cvimg2img(img2, cvg);
     
-    cornerTest(img2, img);    
-    saveImg("test2.jpg", img2);
+    cornerTest(ans, img1);
+    correspTest(ans,img1,img2);
+    saveImg("test2.jpg", ans);
     cvReleaseImage( &cvi ); cvReleaseImage( &cvg );
 }
 
