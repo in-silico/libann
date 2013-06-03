@@ -160,8 +160,8 @@ void test2(){
 int main() {
     srand( time(0) );
     try{
-        test1();
-        //test2();    
+        //test1();
+        test2();    
     } catch(ImgError e) {
         printf("error %d: %s\n", e.code, e.message.c_str());
     }
