@@ -140,6 +140,70 @@ void laplacian(Image<T> &org){
     
 }
 
+template<class T>
+void initialize_kernel(Image<T> &kernel,int num_kernel = 0){
+    for(int i = 0 ; i< 3 ; ++i)
+        for(int j = 0; j<3; ++j)
+            kernel(i,j) = laplacian_kernel[i][j];//Switch - case.
+}
+
+
+template<class T>
+void cp_and_padding(Image<cpx> &ori, Image<T> &img){
+    for(int i = 0; i < ori.rows; ++i){
+        for(int j = 0; j < ori.cols; ++j){
+            if(i < img.rows and j < img.cols)
+                ori(i,j) = cpx(img(i,j),0);
+            else
+                ori(i,j) = cpx(0,0);
+        }
+    }
+}
+
+template<class T>
+void multiply(Image<T> image, Image<T> kernel,Image<T> &dest){
+    if(image.rows !=  kernel.rows or kernel.rows != dest.rows or \
+        image.cols !=  kernel.cols or kernel.cols != dest.cols
+    )  throw ImgError(3,"Dimentions don't match");
+    
+    for(int i = 0; i< image.rows; ++i)
+        for(int j = 0; j<image.cols; ++j)
+            dest(i,j) = image(i,j)*kernel(i,j);
+}
+
+template<class T>
+void frecuency_multiplication(Image<T> &img, int num_kernel = 0){
+    int Ncols = (img.cols == (1<<(log_2(img.cols))-1))? img.cols : 1<<(log_2(img.cols));
+    int Nrows = (img.rows == (1<<(log_2(img.rows))-1))? img.rows : 1<<(log_2(img.rows));
+
+    Image<cpx> ori(Nrows,Ncols);
+    Image<cpx> kernel(Nrows,Ncols);
+    Image<cpx> kernel_frec(Nrows,Ncols);
+    Image<T> init_kernel(3,3);
+    Image<cpx> dest(Nrows,Ncols);
+    Image<cpx> final(Nrows,Ncols);
+    Image<T> final2(Nrows,Ncols);
+
+    initialize_kernel(init_kernel,num_kernel);
+    cp_and_padding(ori,img);
+    cp_and_padding(kernel,init_kernel);
+    
+    
+    FFT_image(ori,dest);
+    FFT_image(kernel,kernel_frec);
+    multiply(dest,kernel_frec,final);
+
+    FFT_image(final,ori,-1);
+        
+    for(int i = 0; i < final.rows; ++i)
+        for(int j = 0; j < final.cols; ++j)
+            final2(i,j) = sqrt(ori(i,j).modsq()) / (Nrows*Ncols);
+
+    final2.normalize();
+
+    save_image("Laplacian_fourier.jpg", final2);   
+}
+
 int main(int argc, char **argv){
     if(argc != 3){
         cout<<"Usage: "<<argv[0]<<" <input> <output>"<<endl;
@@ -182,6 +246,10 @@ int main(int argc, char **argv){
     prewitt(prewitt1);
     sobel(sobel1);
     laplacian(laplacian1);
+
+//    frecuency_multiplication(original); //Laplacian filter (frecuency).
+
+//    cout<<"Pasa"<<endl;
     
     //smoothed.normalize();
     save_image("original.jpg", original);
