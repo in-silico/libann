@@ -86,6 +86,60 @@ void highlight(Image<T> &org, int numker = 1){
 }
 
 
+int sharpen_kernel1[3][3] = {{1 , -2, 1} , {-2, 5, -2} , {1, -2, 1} };
+int sharpen_kernel2[3][3] = {{-1 , -1, -1} , {-1, 9, -1} , {-1, -1, -1} };
+int sharpen_kernel3[3][3] = {{0 , -1, 0} , {-1, 5, -1} , {0, -1, 0} };
+
+template<class T>
+void sharpen(Image<T> &org, int numker = 1){
+    Image<T> kernel(3,3);
+    for(int i = 0 ; i< 3 ; ++i)
+        for(int j = 0; j<3; ++j)
+            kernel(i,j) = (numker!=1)?(numker==2)? sharpen_kernel2[i][j]:sharpen_kernel3[i][j] : sharpen_kernel1[i][j];
+    org.convolve(kernel);
+}
+
+int prewitt_dx[3][3] = {{-1 , -1, -1} , {0, 0, 0} , {1, 1, 1}};
+int prewitt_dy[3][3] = {{-1 , 0, 1} ,{-1 , 0, 1} , {-1 , 0, 1}};
+
+template<class T>
+void prewitt(Image<T> &org){
+    Image<T> kernel(3,3);
+    for(int k=0; k<2; ++k){
+        for(int i = 0 ; i< 3 ; ++i)
+            for(int j = 0; j<3; ++j)
+                kernel(i,j) = (k&0) ? prewitt_dx[i][j] : prewitt_dy[i][j];
+        org.convolve(kernel);
+    }
+}
+
+int sobel_dx[3][3] = {{-1 , -2, -1} , {0, 0, 0} , {1, 2, 1}};
+int sobel_dy[3][3] = {{-1 , 0, 1} ,{-2 , 0, 2} , {-1 , 0, 1}};
+
+template<class T>
+void sobel(Image<T> &org){
+    Image<T> kernel(3,3);
+    for(int k=0; k<2; ++k){
+        for(int i = 0 ; i< 3 ; ++i)
+            for(int j = 0; j<3; ++j)
+                kernel(i,j) = (k&0) ? sobel_dx[i][j] : sobel_dy[i][j];
+        org.convolve(kernel);
+    }
+}
+
+int laplacian_kernel[3][3] = {{-1 , -2, -1} , {0, 0, 0} , {1, 2, 1}};
+
+template<class T>
+void laplacian(Image<T> &org){
+    Image<T> kernel(3,3);
+    for(int i = 0 ; i< 3 ; ++i)
+        for(int j = 0; j<3; ++j)
+            kernel(i,j) = laplacian_kernel[i][j];
+            
+    org.convolve(kernel);
+    
+}
+
 int main(int argc, char **argv){
     if(argc != 3){
         cout<<"Usage: "<<argv[0]<<" <input> <output>"<<endl;
@@ -93,24 +147,55 @@ int main(int argc, char **argv){
     }
     Image<float> original = load_image(argv[1]);
     //Image<float> smoothed = smooth(original);
+    /**
+    * Multiple image definitions. 
+    */
     Image<float> smoothed(original.rows, original.cols);
     Image<float> high1(original.rows, original.cols);
     Image<float> high2(original.rows, original.cols);
     Image<float> high3(original.rows, original.cols);
+    Image<float> sharpen1(original.rows, original.cols);
+    Image<float> sharpen2(original.rows, original.cols);
+    Image<float> sharpen3(original.rows, original.cols);
+    Image<float> prewitt1(original.rows, original.cols);
+    Image<float> sobel1(original.rows, original.cols);
+    Image<float> laplacian1(original.rows, original.cols);
+    
     smoothed = original;
     high1 = original;
     high2 = original;
     high3 = original;
+    sharpen1 = original;
+    sharpen2 = original;
+    sharpen3 = original;
+    prewitt1 = original;
+    sobel1 = original;
+    laplacian1 = original;
+    
     smooth(smoothed);
     highlight(high1);
     highlight(high2,2);
-    highlight(high3,2);
+    highlight(high3,3);
+    sharpen(sharpen1);
+    sharpen(sharpen2,2);
+    sharpen(sharpen3,3);
+    prewitt(prewitt1);
+    sobel(sobel1);
+    laplacian(laplacian1);
+    
     //smoothed.normalize();
-    save_image("original.jpg",original);
-    save_image("smoothed.jpg",smoothed);
-    save_image("high1.jpg",high1);
-    save_image("high2.jpg",high2);
-    save_image("high3.jpg",high3);        
+    save_image("original.jpg", original);
+    save_image("smoothed.jpg", smoothed);
+    save_image("high1.jpg", high1);
+    save_image("high2.jpg", high2);
+    save_image("high3.jpg", high3);
+    save_image("sharpen1.jpg", sharpen1);
+    save_image("sharpen2.jpg", sharpen2);
+    save_image("sharpen3.jpg", sharpen3);
+    save_image("prewitt.jpg", prewitt1);
+    save_image("sobel.jpg", sobel1);
+    save_image("laplacian.jpg", laplacian1);
+    
 //    FFT_test();
     
     return 0;
