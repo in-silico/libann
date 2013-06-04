@@ -144,7 +144,7 @@ template<class T>
 void initialize_kernel(Image<T> &kernel,int num_kernel = 0){
     for(int i = 0 ; i< 3 ; ++i)
         for(int j = 0; j<3; ++j)
-            kernel(i,j) = laplacian_kernel[i][j];//Switch - case.
+            kernel(i,j) = highlight_kernel2[i][j];//laplacian_kernel[i][j];//Switch - case.
 }
 
 
@@ -161,7 +161,7 @@ void cp_and_padding(Image<cpx> &ori, Image<T> &img){
 }
 
 template<class T>
-void multiply(Image<T> image, Image<T> kernel,Image<T> &dest){
+void multiply(Image<T> &image, Image<T> &kernel, Image<T> &dest){
     if(image.rows !=  kernel.rows or kernel.rows != dest.rows or \
         image.cols !=  kernel.cols or kernel.cols != dest.cols
     )  throw ImgError(3,"Dimentions don't match");
@@ -172,9 +172,10 @@ void multiply(Image<T> image, Image<T> kernel,Image<T> &dest){
 }
 
 template<class T>
-void frecuency_multiplication(Image<T> &img, int num_kernel = 0){
+void frecuency_multiplication(Image<T> &img,char *filename, int num_kernel = 0){
     int Ncols = (img.cols == (1<<(log_2(img.cols))-1))? img.cols : 1<<(log_2(img.cols));
     int Nrows = (img.rows == (1<<(log_2(img.rows))-1))? img.rows : 1<<(log_2(img.rows));
+
 
     Image<cpx> ori(Nrows,Ncols);
     Image<cpx> kernel(Nrows,Ncols);
@@ -188,7 +189,7 @@ void frecuency_multiplication(Image<T> &img, int num_kernel = 0){
     cp_and_padding(ori,img);
     cp_and_padding(kernel,init_kernel);
     
-    
+  
     FFT_image(ori,dest);
     FFT_image(kernel,kernel_frec);
     multiply(dest,kernel_frec,final);
@@ -201,7 +202,7 @@ void frecuency_multiplication(Image<T> &img, int num_kernel = 0){
 
     final2.normalize();
 
-    save_image("Laplacian_fourier.jpg", final2);   
+    save_image(filename, final2);   
 }
 
 int main(int argc, char **argv){
@@ -247,7 +248,7 @@ int main(int argc, char **argv){
     sobel(sobel1);
     laplacian(laplacian1);
 
-//    frecuency_multiplication(original); //Laplacian filter (frecuency).
+    frecuency_multiplication(original,argv[2]); //Laplacian filter (frecuency).
 
 //    cout<<"Pasa"<<endl;
     

@@ -272,10 +272,10 @@ void findCorrespondences(corresp &ans, Image<T> &img1, Image<T> &img2, CorrespPa
 
 template<class T>
 T& Image<T>::at(int i, int j) {
-    if (i<0) i=0;
-    if (j<0) j=0;
-    if (i>=rows) i=rows-1;
-    if (j>=cols) j=cols-1;
+    if (i<0) i = rows + i ;
+    if (j<0) j = cols + j;
+    if (i>=rows) i= i%rows;
+    if (j>=cols) j= j%cols;
     return data[i*cols + j];
 }
 
