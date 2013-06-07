@@ -53,6 +53,7 @@ void negative(Image<T> &img2, Image<T> &img) {
 template <class T>
 void testFilter(Image<T> &img2, Image<T> &img) {
     gaussianFilter(img2, img, 2.0);
+
 }
 
 template<class T>
@@ -118,7 +119,40 @@ void correspTest(Image<T> &img1, Image<T> &img2) {
     printf("Done\n");
 }
 
-void test1() {
+void testFilter() {
+    IplImage *cvi = cvLoadImage("test.jpg");
+    int m = cvi->width, n = cvi->height;
+    IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
+    cvCvtColor(cvi,cvg,CV_RGB2GRAY);
+    Image<float> img1(n,m); cvimg2img(img1, cvg); 
+    Image<float> img2(n,m);
+    testFilter(img2, img1);
+
+    //Image<float> ans(n,2*m);    
+    //cornerTest(ans, img1);
+    //correspTest(img1,img2);
+    saveImg("out.jpg", img2);
+    cvReleaseImage( &cvi ); cvReleaseImage( &cvg );
+}
+
+void testHarris() {
+    IplImage *cvi = cvLoadImage("test.jpg");
+    int m = cvi->width, n = cvi->height;
+    IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
+    cvCvtColor(cvi,cvg,CV_RGB2GRAY);
+    Image<float> img1(n,m); cvimg2img(img1, cvg); 
+    Image<float> img2(n,m);
+    //testFilter(img2, img1);
+
+    //Image<float> ans(n,2*m);    
+    cornerTest(img2, img1);
+    //correspTest(img1,img2);
+    saveImg("out.jpg", img2);
+    cvReleaseImage( &cvi ); cvReleaseImage( &cvg );
+
+}
+
+void test3() {
     IplImage *cvi = cvLoadImage("left.jpg");
     int m = cvi->width, n = cvi->height;
     IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
@@ -161,7 +195,7 @@ int main() {
     srand( time(0) );
     try{
         //test1();
-        test2();    
+        testHarris();    
     } catch(ImgError e) {
         printf("error %d: %s\n", e.code, e.message.c_str());
     }
