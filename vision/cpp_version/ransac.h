@@ -19,7 +19,7 @@ public:
      * the indexes of the data point values. If there was a previously computed model it
      * is safe to throw it.
      */
-    virtual void computeModel(int *indexes) = 0;
+    virtual void computeModel(int *indexes, int nindexes) = 0;
 
     /**
      * Computes the error of the instance indexed by ix from the currently computed model
@@ -33,13 +33,16 @@ public:
      */
     virtual void saveCurrentModel() = 0;
 
+    // Set current model equal to the best saved model
+    virtual void useSavedModel() = 0;
+
     Ransac(int n, int m, int ndata, double rho);
    
     //return in indexes a reandom set of m elements
     void randSet(int *indexes);
 
     //returns the size of the support set for the current model
-    int supportSize();
+    int supportSize(int *indexes=0);
 
     //runs ransac to fit a model robust to outliers
     void ransac();
@@ -66,22 +69,26 @@ void Ransac::randSet(int *indexes) {
     }
 }
 
-int Ransac::supportSize() {
+int Ransac::supportSize(int *indexes) {
     int ans=0;
     for (int i=0; i<ndata; i++) {
         double tmp = compError(i);
-        if (tmp < rho) ans++;
+        if (tmp < rho) {
+            if (indexes != 0) indexes[ans]=i;
+            ans++;
+        }
     }
+    return ans;
 }
 
 void Ransac::ransac() {
     double N = 1e100;
     int iter=0;
-    int subset[n];
+    int* subset = new int[ndata];
     int bestSupp = 0;
     while ( (iter < N) && (bestSupp < m) ) {
         randSet(subset);
-        computeModel(subset);
+        computeModel(subset,n);
         int supp = supportSize();
         if (supp > bestSupp) {
             saveCurrentModel();
@@ -91,6 +98,12 @@ void Ransac::ransac() {
         double w = bestSupp/((double)ndata); //current probability that a datapoint is inlier
         N = log(1-p)/log(1-pow(w,n)); //update to current maximum number of iterations
     }
+    //after finishing, recompute the model with all the inliers
+    useSavedModel();
+    int inliers = supportSize(subset);
+    computeModel(subset,inliers);
+    saveCurrentModel();
+    delete [] subset;
 }
 
 #endif
