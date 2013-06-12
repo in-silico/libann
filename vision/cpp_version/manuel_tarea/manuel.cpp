@@ -102,7 +102,7 @@ template<class T>
 void initialize_kernel(Image<T> &kernel,int num_kernel = 0){
     for(int i = 0 ; i< 3 ; ++i)
         for(int j = 0; j<3; ++j)
-            kernel(i,j) = highlight_kernel3[i][j];//laplacian_kernel[i][j];//Switch - case.
+            kernel(i,j) = highlight_kernel3[i][j];//(1.0/16.0)*smooth_kernel[i][j];//highlight_kernel3[i][j];//laplacian_kernel[i][j];//Switch - case.
 }
 
 
@@ -188,7 +188,7 @@ int main(int argc, char **argv){
     Image<float> prewitt1(original.rows, original.cols);
     Image<float> sobel1(original.rows, original.cols);
     Image<float> laplacian1(original.rows, original.cols);
-    
+
     smoothed = original;
     high1 = original;
     high2 = original;
@@ -210,10 +210,8 @@ int main(int argc, char **argv){
     prewitt(prewitt1);
     sobel(sobel1);
     laplacian(laplacian1);
-
+  
     frecuency_multiplication(original,argv[2]); //Laplacian filter (frecuency).
-
-//    cout<<"Pasa"<<endl;
     
     //smoothed.normalize();
     save_image("original.jpg", original);
@@ -227,7 +225,6 @@ int main(int argc, char **argv){
     save_image("prewitt.jpg", prewitt1);
     save_image("sobel.jpg", sobel1);
     save_image("laplacian.jpg", laplacian1);
-    
 //    FFT_test();
     
     return 0;

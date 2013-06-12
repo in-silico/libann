@@ -27,7 +27,7 @@ public:
     int rows,cols;
 
     Image(int _rows, int _cols): rows(_rows), cols(_cols){
-        data = new T[rows*cols];
+        data = new T[_rows*_cols];
     }
     
     ~Image(){
@@ -46,6 +46,14 @@ public:
         if (i<0 || j<0 || i>=rows || j>=cols) throw ImgError(1,"Out of bound index exception");
         return data[i*cols + j];
     }
+    
+    Image& operator=(const Image &other){
+        if (other.rows != rows || other.cols != cols)
+            throw ImgError(11, "images of different dimensions on a copy operation.");
+        rows = other.rows; cols = other.cols;
+        memcpy(data, other.data, rows*cols*sizeof(T));
+        return *this;
+    } 
     
     T *getRow(int r){
         return &data[r*cols];
