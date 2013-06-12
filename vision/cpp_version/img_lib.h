@@ -21,6 +21,7 @@ struct Point2D {
     ~Point2D() {}
     Point2D<T> operator+(Point2D<T> p) { return Point2D<T>(x+p.x, y+p.y); }
     Point2D<T> operator-(Point2D<T> p) { return Point2D<T>(x-p.x, y-p.y); }
+    Point2D<T> operator*(T scalar) { return Point2D<T>(x*scalar, y*scalar); }
     T dot(Point2D<T> p) { return x*p.x + y*p.y; }
     T norm() { return sqrt( dot(*this) ); }
     T dist(Point2D<T> p) { return (p - *this).norm(); }

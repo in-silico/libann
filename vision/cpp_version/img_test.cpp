@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <iostream>
 #include "img_lib.h"
+#include "homography.h"
 
 using namespace std;
 
