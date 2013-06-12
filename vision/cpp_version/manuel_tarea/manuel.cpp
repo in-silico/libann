@@ -1,5 +1,4 @@
 #include "extra.h"
-#include "img_lib.h"
 #include <cmath>
 #include <string>
 #include <iostream>
@@ -19,47 +18,6 @@ Image<float> load_image(char *filename){
     cvimg2img(img, cvi);
     return img;
 }
-
-void FFT_test() {
-    IplImage *cvi = cvLoadImage("test.jpg");
-    int m = cvi->width, n = cvi->height;
-    IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
-    cvCvtColor(cvi,cvg,CV_RGB2GRAY);
-    Image<float> img(n,m);
-    Image<float> img2(n,m);
-    cvimg2img(img, cvg);
-    int Ncols = (img.cols == (1<<(log_2(img.cols))-1))? img.cols : 1<<(log_2(img.cols));
-    int Nrows = (img.rows == (1<<(log_2(img.rows))-1))? img.rows : 1<<(log_2(img.rows));
-    Image<cpx> ori(Nrows,Ncols);
-    Image<cpx> dest(Nrows,Ncols);
-    
-    for(int i = 0; i < Nrows; ++i){
-        for(int j = 0; j < Ncols; ++j){
-            if(i < img.rows and j < img.cols)
-                ori(i,j) = cpx(img(i,j),0);
-            else
-                ori(i,j) = cpx(0,0);
-        }
-    }
-    
-    FFT_image(ori,dest);
-
-    int tmp=5;
-    for (int i=-tmp; i<=tmp; i++) for (int j=-tmp; j<=tmp; j++) {
-        dest((i+Nrows)%Nrows, (j+Ncols) % Ncols) = 0;
-    }
-    FFT_image(dest,ori,-1);
-    
-    dest = ori;
-    for(int i = 0; i < img2.rows; ++i)
-        for(int j = 0; j < img2.cols; ++j)
-            img2(i,j) = sqrt(dest(i,j).modsq()) / (Nrows*Ncols);
-            
-    //img2.normalize(255);
-
-    save_image("salida.jpg", img2);
-}
-
 
 int smooth_kernel[3][3] = {{1 , 2, 1} , {2, 4, 2} , {1, 2, 1} };
 
@@ -144,7 +102,7 @@ template<class T>
 void initialize_kernel(Image<T> &kernel,int num_kernel = 0){
     for(int i = 0 ; i< 3 ; ++i)
         for(int j = 0; j<3; ++j)
-            kernel(i,j) = highlight_kernel2[i][j];//laplacian_kernel[i][j];//Switch - case.
+            kernel(i,j) = highlight_kernel3[i][j];//(1.0/16.0)*smooth_kernel[i][j];//highlight_kernel3[i][j];//laplacian_kernel[i][j];//Switch - case.
 }
 
 
@@ -175,8 +133,10 @@ template<class T>
 void frecuency_multiplication(Image<T> &img,char *filename, int num_kernel = 0){
     int Ncols = (img.cols == (1<<(log_2(img.cols))-1))? img.cols : 1<<(log_2(img.cols));
     int Nrows = (img.rows == (1<<(log_2(img.rows))-1))? img.rows : 1<<(log_2(img.rows));
+//    Ncols = Nrows = max(Ncols,Nrows);
 
-
+    cout<<Ncols<<" "<<Nrows<<endl;
+    
     Image<cpx> ori(Nrows,Ncols);
     Image<cpx> kernel(Nrows,Ncols);
     Image<cpx> kernel_frec(Nrows,Ncols);
@@ -188,7 +148,6 @@ void frecuency_multiplication(Image<T> &img,char *filename, int num_kernel = 0){
     initialize_kernel(init_kernel,num_kernel);
     cp_and_padding(ori,img);
     cp_and_padding(kernel,init_kernel);
-    
   
     FFT_image(ori,dest);
     FFT_image(kernel,kernel_frec);
@@ -197,8 +156,12 @@ void frecuency_multiplication(Image<T> &img,char *filename, int num_kernel = 0){
     FFT_image(final,ori,-1);
         
     for(int i = 0; i < final.rows; ++i)
-        for(int j = 0; j < final.cols; ++j)
-            final2(i,j) = sqrt(ori(i,j).modsq()) / (Nrows*Ncols);
+        for(int j = 0; j < final.cols; ++j){
+            //final2(i,j) = ori(i,j).a / (Nrows*Ncols); // REAL
+            final2(i,j) = sqrt(ori(i,j).modsq()) / (Nrows*Ncols); // Magnitude
+            assert(ori(i,j).b < 1e-4);
+        }
+    
 
     final2.normalize();
 
@@ -225,7 +188,7 @@ int main(int argc, char **argv){
     Image<float> prewitt1(original.rows, original.cols);
     Image<float> sobel1(original.rows, original.cols);
     Image<float> laplacian1(original.rows, original.cols);
-    
+
     smoothed = original;
     high1 = original;
     high2 = original;
@@ -247,10 +210,8 @@ int main(int argc, char **argv){
     prewitt(prewitt1);
     sobel(sobel1);
     laplacian(laplacian1);
-
+  
     frecuency_multiplication(original,argv[2]); //Laplacian filter (frecuency).
-
-//    cout<<"Pasa"<<endl;
     
     //smoothed.normalize();
     save_image("original.jpg", original);
@@ -264,7 +225,6 @@ int main(int argc, char **argv){
     save_image("prewitt.jpg", prewitt1);
     save_image("sobel.jpg", sobel1);
     save_image("laplacian.jpg", laplacian1);
-    
 //    FFT_test();
     
     return 0;
