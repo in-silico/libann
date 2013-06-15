@@ -21,6 +21,7 @@
 #include "homography.h"
 
 using namespace std;
+using namespace cv;
 
 /*template<class T>
 Image<T>* loadImg(const char *s) {
@@ -79,19 +80,45 @@ void cornerTest(Image<T> &img2, Image<T> &img) {
     vector< Point2D<int> > corners;
     tmp.nonMaxSupr(7,1E8,corners);
     int n = corners.size();
-    printf("%d\n",n);
+    printf("Number of corners found: %d\n",n);
     for (int i=0; i<n; i++) {
         drawCorner(img2, corners[i]);
+    }
+}
+
+void pmat(Mat x) {
+    for(int i=0; i<x.rows; i++) {
+        for(int j=0;j<x.cols;j++) {
+            cout << x.at<double>(i,j) << " ";
+        }
+        cout << endl;
     }
 }
 
 template<class T>
 void correspTest(Image<T> &img1, Image<T> &img2) {
     corresp pts; CorrespParams params;
-    params.matchThresh=-200000;
-    params.nmsThresh=1e10;
-    params.scoreW = 11;
+    params.matchThresh=-2e9;
+    params.nmsThresh=1e8;
+    params.nmsW = 35;
+    params.scoreW = 25;
+    params.matchDist = 70;
+    printf("Staring to find correspondences (This might be slow O(n^2) on Harris correspondences)\n");
     findCorrespondences(pts, img1, img2, params);
+    printf("Done. Correspondences found: %d\n", pts.size());
+    printf("Starting ransac to compute the Homography...\n");
+
+    HomographyRansac hr(12,pts.size()/2,pts.size(),0.006); //setting rho to 0.1
+    hr.setCorresp(pts);
+    hr.ransac();
+    int *inliers = new int[pts.size()];
+    int ninliers = hr.supportSize(inliers);
+    //int ninliers = pts.size();
+    //for (int i=0; i<ninliers; i++) inliers[i] = i;
+
+    printf("Done, number of inliers: %d.\nPrinting best matrix: \n", ninliers);
+    pmat(hr.bestH);
+    printf("Done. Creating an image that shows a percentaje the correspondences found...\n");
 
     //create image with two images left and right
     int n = img1.rows; //assumed equal to img2.rows
@@ -106,18 +133,19 @@ void correspTest(Image<T> &img1, Image<T> &img2) {
     }
 
     double p = 0.2; //probability that a correspondence is shown
-    for (int i=0; i<pts.size(); i++) {
+    for (int i=0; i<ninliers; i++) {
         double r = (rand() / ((double)RAND_MAX));
-        ipt p1 = pts[i].first, p2 = pts[i].second;
+        ipt p1 = pts[inliers[i]].first, p2 = pts[inliers[i]].second;
         if (r<p) {
             cvCircle(cvg,cvPoint(p1.y,p1.x),3,cvScalar(0,0,0));
             cvCircle(cvg,cvPoint(p2.y+img1.cols+1,p2.x),3,cvScalar(0,0,0));
             cvLine(cvg,cvPoint(p1.y,p1.x),cvPoint(p2.y +img1.cols + 1,p2.x),cvScalar(0,0,0));
         }
-        printf("(%d, %d) -> (%d, %d)\n",p1.x,p1.y,p2.x,p2.y);
+        //printf("(%d, %d) -> (%d, %d)\n",p1.x,p1.y,p2.x,p2.y);
     }
     cvSaveImage("out.jpg",cvg);
-    printf("Done\n");
+    printf("Done.\n");
+    delete [] inliers;
 }
 
 void testFilter() {
@@ -142,15 +170,15 @@ void testHarris() {
     IplImage *cvg = cvCreateImage(cvSize(m,n),IPL_DEPTH_8U,1);
     cvCvtColor(cvi,cvg,CV_RGB2GRAY);
     Image<float> img1(n,m); cvimg2img(img1, cvg); 
-    Image<float> img2(n,m);
+    Image<float> img2(n,m); Image<float> img3(n,m);
     //testFilter(img2, img1);
 
-    //Image<float> ans(n,2*m);    
-    cornerTest(img2, img1);
-    //correspTest(img1,img2);
-    saveImg("out.jpg", img2);
+    //Image<float> ans(n,2*m);
+    printf("Staring Harris...\n");
+    cornerTest(img3, img1);
+    printf("Harris ended its execution\n");
+    saveImg("harris.jpg", img3);
     cvReleaseImage( &cvi ); cvReleaseImage( &cvg );
-
 }
 
 void test3() {
@@ -196,7 +224,7 @@ int main() {
     srand( time(0) );
     try{
         //test1();
-        testHarris();    
+        test3();    
     } catch(ImgError e) {
         printf("error %d: %s\n", e.code, e.message.c_str());
     }

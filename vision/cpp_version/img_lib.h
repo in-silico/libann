@@ -55,12 +55,12 @@ public:
 struct CorrespParams {
     int harrisW, nmsW, scoreW;
     double harrisK, nmsThresh;
-    double matchThresh;
+    double matchThresh, matchDist;
     char scoreMethod;
 
     CorrespParams() { 
         harrisW=5; nmsThresh=0.01; nmsW=7; nmsThresh=1e7; 
-        matchThresh = 3; scoreMethod=0; scoreW=9;
+        matchThresh = 3; scoreMethod=0; scoreW=9; matchDist=10;
     }
 };
 
@@ -255,10 +255,12 @@ void findCorrespondences(corresp &ans, Image<T> &img1, Image<T> &img2, CorrespPa
     tmp2.nonMaxSupr(p.nmsW,p.nmsThresh,pt2);
 
     ans.clear();
+    int *favorite = new int[pt1.size()];
     for (int i=0; i<pt1.size(); i++) {
         int best_ix=-1;
         double best_score=-1e100; //minus infinity
         for (int j=0; j<pt2.size(); j++) {
+            if (pt1[i].dist(pt2[j]) > p.matchDist) continue;
             double c_score = correspScore(img1, img2, pt1[i], pt2[j], p);
             if (c_score > best_score) {
                 //this one is better
@@ -266,9 +268,27 @@ void findCorrespondences(corresp &ans, Image<T> &img1, Image<T> &img2, CorrespPa
                 best_score = c_score;
             }
         }
-        if (best_score > p.matchThresh) 
-            ans.push_back( pair<ipt,ipt>(pt1[i],pt2[best_ix]) );
+        if (best_score > p.matchThresh) favorite[i] = best_ix;
+        else favorite[i] = -1;
     }
+
+    for (int j=0; j<pt2.size(); j++) {
+        int best_ix=-1;
+        double best_score=-1e100; //minus infinity
+        for (int i=0; i<pt1.size(); i++) { 
+            if (pt1[i].dist(pt2[j]) > p.matchDist) continue;
+            double c_score = correspScore(img1, img2, pt1[i], pt2[j], p);
+            if (c_score > best_score) {
+                //this one is better
+                best_ix = i;
+                best_score = c_score;
+            }
+        }
+        if (favorite[best_ix] == j)
+            ans.push_back( pair<ipt,ipt>(pt1[best_ix],pt2[j]) );
+    }
+
+    delete [] favorite;
 }
 
 template<class T>

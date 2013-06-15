@@ -16,7 +16,8 @@ typedef Point2D<double> dpt;
 typedef vector< dpt > vdpt;
 
 class HomographyRansac : public Ransac {
-    corresp orgPts;
+public:
+    //corresp orgPts;
     vdpt x, xp;
     Mat T, Tp;
     //model
@@ -51,10 +52,9 @@ class HomographyRansac : public Ransac {
     void computeModel(int *indexes, int nindexes) {
         Mat A(2*nindexes,9,CV_64F);
         cmpA(A, indexes, nindexes);
-        //do svd and take last column of V^T, that should be the last row of V
+        //do svd and take last column of V, that should be the last row of V^T
         SVD svd(A);
-        Mat v = svd.vt.t();
-        double *ans = v.ptr<double>(8); //must be 9x9
+        double *ans = svd.vt.ptr<double>(8); //must be 9x9
 
         rep(i,9) vecH.at<double>(i,0) = ans[i];
         rep(i,3) {
@@ -63,7 +63,7 @@ class HomographyRansac : public Ransac {
         }
     }
 
-    double computeError(int ix) {
+    double compError(int ix) {
         //this returns the algebraic error
         Mat A(2,9,CV_64F);
         cmpA(A,&ix,1);
@@ -71,12 +71,12 @@ class HomographyRansac : public Ransac {
         return err.dot(err);
     }
 
-    void setCorresp(corresp myPairs) {
+    void setCorresp(corresp &myPairs) {
         dpt avgx(0,0), avgxp(0,0);
         int N = myPairs.size();
         for (int i=0; i<N; i++) {
             pair<ipt,ipt> curr = myPairs[i];
-            orgPts.push_back(curr);
+            //orgPts.push_back(curr);
             dpt tmp1(curr.first.x,curr.first.y);
             dpt tmp2(curr.second.x,curr.second.y);
             avgx = avgx + tmp1;
@@ -95,7 +95,8 @@ class HomographyRansac : public Ransac {
             xp.push_back(tmp2 - avgxp);
             s += x[i].norm(); sp += xp[i].norm();
         }
-        s = 1/s; sp = 1/sp;
+        double tmp = sqrt(2);
+        s = tmp*N/s; sp = tmp*N/sp;
         for (int i=0; i<N; i++) {
             x[i] = x[i] * s;
             xp[i] = xp[i] * sp;
