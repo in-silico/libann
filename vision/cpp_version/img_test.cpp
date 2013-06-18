@@ -19,6 +19,7 @@
 #include <iostream>
 #include "img_lib.h"
 #include "homography.h"
+#include "calibration.h"
 
 using namespace std;
 using namespace cv;
@@ -108,7 +109,7 @@ void correspTest(Image<T> &img1, Image<T> &img2) {
     printf("Done. Correspondences found: %d\n", pts.size());
     printf("Starting ransac to compute the Homography...\n");
 
-    HomographyRansac hr(12,pts.size()/2,pts.size(),0.006); //setting rho to 0.1
+    HomographyRansac hr(12,pts.size()/2,pts.size(),0.001); //setting rho to 0.1
     hr.setCorresp(pts);
     hr.ransac();
     int *inliers = new int[pts.size()];
@@ -132,7 +133,7 @@ void correspTest(Image<T> &img1, Image<T> &img2) {
         for (int j=0; j<img2.cols; j++) row[img1.cols + j + 1] = (uchar)r2[j];
     }
 
-    double p = 0.2; //probability that a correspondence is shown
+    double p = 0.4; //probability that a correspondence is shown
     for (int i=0; i<ninliers; i++) {
         double r = (rand() / ((double)RAND_MAX));
         ipt p1 = pts[inliers[i]].first, p2 = pts[inliers[i]].second;

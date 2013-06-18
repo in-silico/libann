@@ -5,7 +5,7 @@ FLAGS := -g
 
 all: test extra ransac
 
-test: img_test.cpp img_lib.h homography.h 
+test: img_test.cpp img_lib.h homography.h calibration.h 
 	g++ img_test.cpp -o test -I$(INC) $(LIB) $(FLAGS)
 
 ransac: test_ransac.cpp ransac.h
