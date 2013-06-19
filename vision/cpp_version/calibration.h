@@ -22,6 +22,10 @@ public:
     Mat P, bestP;
     Mat vecP; //h as a single column vector
 
+    //parameters
+    Mat traslation, rotation;
+    Mat intrinsec;
+
     TsaiCalibRansac(int n, int m, int ndata, double rho) : Ransac(n,m,ndata,rho) {
         P.create(3,4,CV_64F); bestP.create(3,4,CV_64F);
         vecP.create(12,1,CV_64F);
@@ -101,6 +105,11 @@ public:
     void saveCurrentModel() {
         //save the current model in unnormalized form
         bestP = T.inv()*P*U;
+
+        //compute parameters
+        //translation = bestP.cols(3);
+        //Mat m = bestP.colRange(0,2);
+
     }
 
     void useSavedModel() {
