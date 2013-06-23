@@ -24,6 +24,10 @@
 using namespace std;
 using namespace cv;
 
+#define rep(i,n) for(int i=0; i<(n); i++)
+#define repf(i,a,b) for (int i=(a); i<=(b); i++)
+#define repb(i,a,b) for(int i=(a); i>=(b); i--)
+
 /*template<class T>
 Image<T>* loadImg(const char *s) {
     IplImage *cvi = cvLoadImage("test.jpg");
@@ -202,6 +206,40 @@ void test3() {
     cvReleaseImage( &cvi ); cvReleaseImage( &cvg );
 }
 
+void test4() {
+    //test tsai-s pattern calibration (Reading from file)
+    FILE *f = fopen("tsai.in","r");
+    int N; //number of correspondences
+    fscanf(f,"%d",&N);
+    Mat x3d(N,3,CV_64F);
+    Mat x2d(N,2,CV_64F);
+    rep(i,N) {
+        double *r3 = x3d.ptr<double>(i);
+        double *r2 = x2d.ptr<double>(i);
+        rep(k,3) fscanf(f,"%lf",&r3[k]);
+        rep(k,2) fscanf(f,"%lf",&r2[k]);
+    }
+    TsaiCalibRansac tcr(12,N-5,N,0.01);
+    tcr.setCorresp(x3d,x2d);
+    tcr.ransac();
+    int *indexes = new int[N];
+    int ss = tcr.supportSize(indexes);
+    tcr.useSavedModel();
+    pmat(tcr.bestP);
+    printf("Support Size: %d\n",ss);
+    rep(i,ss) printf("%d, ",indexes[i]);
+    printf("\n");
+    printf("Type the 3d point that you want to project: ");
+    Mat p3d(4,1,CV_64F);
+    rep(i,3) cin >> p3d.at<double>(i,0);
+    p3d.at<double>(3,0) = 1;
+    Mat p2d = tcr.bestP * p3d;
+    rep(i,3) p2d.at<double>(i,0) /= p2d.at<double>(2,0);
+    pmat(p2d);
+    fclose(f);
+    delete [] indexes;
+}
+
 void test2(){
     IplImage *cvi = cvLoadImage("test.jpg");
     int m = cvi->width, n = cvi->height;
@@ -225,7 +263,8 @@ int main() {
     srand( time(0) );
     try{
         //test1();
-        test3();    
+        //test3();
+        test4();
     } catch(ImgError e) {
         printf("error %d: %s\n", e.code, e.message.c_str());
     }

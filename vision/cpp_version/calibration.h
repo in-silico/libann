@@ -39,12 +39,12 @@ public:
         x3h[3]=1;
         double wip = 1, xip=x2c[0], yip=x2c[1];
         rep(j,4) r1[j]=0;
-        rep(j,4) r1[3+j] = -wip*x3h[j];
-        rep(j,4) r1[6+j] = yip*x3h[j];
+        rep(j,4) r1[4+j] = -wip*x3h[j];
+        rep(j,4) r1[8+j] = yip*x3h[j];
 
         rep(j,4) r2[j] = wip*x3h[j];
-        rep(j,4) r2[3+j] = 0;
-        rep(j,4) r2[6+j] = -xip*x3h[j];
+        rep(j,4) r2[4+j] = 0;
+        rep(j,4) r2[8+j] = -xip*x3h[j];
     }
 
     void cmpA(Mat &A,int *indexes, int nindexes) {
@@ -56,7 +56,7 @@ public:
     }
 
     void computeModel(int *indexes, int nindexes) {
-        Mat A(2*nindexes,9,CV_64F);
+        Mat A(2*nindexes,12,CV_64F);
         cmpA(A, indexes, nindexes);
         //do svd and take last column of V, that should be the last row of V^T
         SVD svd(A);
